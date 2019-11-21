@@ -17,7 +17,7 @@ import {
 	TouchableHighlight
 } from "react-native"
 import { Router, Scene, Stack } from "react-native-router-flux"
-import { Login, Home, CropMap, } from "./js"
+import { Login, Home, CropMap, ARMode, AR } from "./js"
 
 import { ViroVRSceneNavigator, ViroARSceneNavigator } from "react-viro"
 
@@ -32,7 +32,7 @@ var sharedProps = {
 }
 
 // Sets the default scene you want for AR and VR
-var InitialARScene = require("./js/HelloWorldSceneAR")
+var InitialARScene = require("./js/ARMode")
 // var InitialVRScene = require("./js/HelloWorldScene")
 
 var UNSET = "UNSET"
@@ -53,9 +53,7 @@ export default class ViroSample extends Component {
 		}
 		this._NonARRoot = this._NonARRoot.bind(this)
 		this._getARNavigator = this._getARNavigator.bind(this)
-		this._getExperienceButtonOnPress = this._getExperienceButtonOnPress.bind(
-			this
-		)
+		this._goToAR = this._goToAR.bind(this)
 		this._exitViro = this._exitViro.bind(this)
 	}
 
@@ -77,7 +75,17 @@ export default class ViroSample extends Component {
 				<Stack key="root">
 					{/* <Scene key="login" component={Login} title="Login" /> */}
 					<Scene key="home" component={Home} title="Home" />
-					<Scene key="map" component={CropMap} title="My Map" />
+					<Scene
+						key="map"
+						render={props => <CropMap {...props} goToAR={this.goToAR} />}
+						title="My Map"
+					/>
+					<Scene
+						key="ar"
+						component={AR}
+						props={this.state.sharedProps}
+						title="Farmin'!"
+					/>
 				</Stack>
 			</Router>
 
@@ -130,10 +138,10 @@ export default class ViroSample extends Component {
 
 	// This function returns an anonymous/lambda function to be used
 	// by the experience selector buttons
-	_getExperienceButtonOnPress(navigatorType) {
+	_goToAR(navigatorType) {
 		return () => {
 			this.setState({
-				navigatorType: navigatorType
+				navigatorType: AR_NAVIGATOR_TYPE
 			})
 		}
 	}
