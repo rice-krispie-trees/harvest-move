@@ -17,7 +17,7 @@ import {
 	TouchableHighlight
 } from "react-native"
 import { Router, Scene, Stack } from "react-native-router-flux"
-import { Login, Home } from "./js"
+import { Login, Home, CropMap, } from "./js"
 
 import { ViroVRSceneNavigator, ViroARSceneNavigator } from "react-viro"
 
@@ -33,7 +33,7 @@ var sharedProps = {
 
 // Sets the default scene you want for AR and VR
 var InitialARScene = require("./js/HelloWorldSceneAR")
-var InitialVRScene = require("./js/HelloWorldScene")
+// var InitialVRScene = require("./js/HelloWorldScene")
 
 var UNSET = "UNSET"
 var VR_NAVIGATOR_TYPE = "VR"
@@ -75,8 +75,9 @@ export default class ViroSample extends Component {
 		return (
 			<Router>
 				<Stack key="root">
-					<Scene key="login" component={Login} title="Login" />
+					{/* <Scene key="login" component={Login} title="Login" /> */}
 					<Scene key="home" component={Home} title="Home" />
+					<Scene key="map" component={CropMap} title="My Map" />
 				</Stack>
 			</Router>
 

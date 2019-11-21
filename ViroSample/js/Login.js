@@ -1,6 +1,6 @@
 import React from "react"
 import { View, Text, Button } from "react-native"
-import { GoogleSignin } from "react-native-google-signin"
+//import { GoogleSignin } from "react-native-google-signin"
 import * as firebase from "firebase"
 
 export default class Login extends React.Component {
@@ -40,10 +40,10 @@ export default class Login extends React.Component {
 			<View>
 				<Text>Behold, our login page.</Text>
 				<View>
-					<Button
+					{/* <Button
 						title="Sign in with Google"
 						onPress={this.googleLogin}
-					></Button>
+					></Button> */}
 				</View>
 			</View>
 		)

@@ -1,10 +1,11 @@
 import React from "react"
 import { View, Text } from "react-native"
+import { Actions } from "react-native-router-flux"
 
-export default function Login() {
+export default function Home () {
 	return (
 		<View>
-			<Text>Behold, our home page.</Text>
+			<Text onPress={() => Actions.map()}>Behold, our home page.</Text>
 		</View>
 	)
 }
