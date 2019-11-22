@@ -7,7 +7,7 @@ import MapView, { Marker } from "react-native-maps"
 export default function CropMap() {
 	return (
 		<View>
-			<Text onPress={this.props.goToAR}>Behold, our map page.</Text>
+			<Text onPress={() => Actions.ar()}>Behold, our map page.</Text>
 		</View>
 	)
 }

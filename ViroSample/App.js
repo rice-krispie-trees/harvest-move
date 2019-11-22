@@ -17,9 +17,9 @@ import {
 	TouchableHighlight
 } from "react-native"
 import { Router, Scene, Stack } from "react-native-router-flux"
-import { Login, Home, CropMap, ARMode, AR } from "./js"
+import { Login, Home, CropMap, AR } from "./js"
 
-import { ViroVRSceneNavigator, ViroARSceneNavigator } from "react-viro"
+import { ViroARSceneNavigator } from "react-viro"
 
 import { firebaseConfig } from "./firebase/config"
 import { FirebaseWrapper } from "./firebase/firebase"
@@ -36,7 +36,6 @@ var InitialARScene = require("./js/ARMode")
 // var InitialVRScene = require("./js/HelloWorldScene")
 
 var UNSET = "UNSET"
-var VR_NAVIGATOR_TYPE = "VR"
 var AR_NAVIGATOR_TYPE = "AR"
 
 // This determines which type of experience to launch in, or UNSET, if the user should
@@ -51,7 +50,7 @@ export default class ViroSample extends Component {
 			navigatorType: defaultNavigatorType,
 			sharedProps: sharedProps
 		}
-		this._NonARRoot = this._NonARRoot.bind(this)
+		//this._NonARRoot = this._NonARRoot.bind(this)
 		this._getARNavigator = this._getARNavigator.bind(this)
 		this._goToAR = this._goToAR.bind(this)
 		this._exitViro = this._exitViro.bind(this)
@@ -61,15 +60,15 @@ export default class ViroSample extends Component {
 	// if you are building a specific type of experience.
 	render() {
 		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-		if (this.state.navigatorType == UNSET) {
-			return this._NonARRoot()
-		} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
-			return this._getARNavigator()
-		}
-	}
+	// 	if (this.state.navigatorType == UNSET) {
+	// 		return this._NonARRoot()
+	// 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
+	// 		return this._getARNavigator()
+	// 	}
+	// }
 
 	// Presents the user with a choice of an AR or VR experience
-	_NonARRoot() {
+	//_NonARRoot() {
 		return (
 			<Router>
 				<Stack key="root">
@@ -77,14 +76,12 @@ export default class ViroSample extends Component {
 					<Scene key="home" component={Home} title="Home" />
 					<Scene
 						key="map"
-						render={props => <CropMap {...props} goToAR={this.goToAR} />}
+						component={CropMap}
 						title="My Map"
 					/>
 					<Scene
 						key="ar"
 						component={AR}
-						props={this.state.sharedProps}
-						title="Farmin'!"
 					/>
 				</Stack>
 			</Router>
@@ -121,17 +118,6 @@ export default class ViroSample extends Component {
 			<ViroARSceneNavigator
 				{...this.state.sharedProps}
 				initialScene={{ scene: InitialARScene }}
-			/>
-		)
-	}
-
-	// Returns the ViroSceneNavigator which will start the VR experience
-	_getVRNavigator() {
-		return (
-			<ViroVRSceneNavigator
-				{...this.state.sharedProps}
-				initialScene={{ scene: InitialVRScene }}
-				onExitViro={this._exitViro}
 			/>
 		)
 	}

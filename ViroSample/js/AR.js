@@ -1,11 +1,12 @@
 import React, { Component } from "react"
-import { ARMode } from "./ARMode"
 import { ViroARSceneNavigator } from "react-viro"
 
-export default class AR extends Component {
-	render() {
+const InitialARScene = require("./ARMode")
+
+const AR = (props) => {
 		return (
-			<ViroARSceneNavigator {...this.props} initialScene={{ scene: ARMode }} />
+			<ViroARSceneNavigator {...props} initialScene={{ scene: InitialARScene }} />
 		)
-	}
 }
+
+export default AR
