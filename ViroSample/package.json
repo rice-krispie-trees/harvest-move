@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "firebase": "^7.4.0",
+    "geofirestore": "^3.3.1",
     "mercator-projection": "0.0.2",
     "react": "16.8.3",
     "react-native": "0.59.9",
