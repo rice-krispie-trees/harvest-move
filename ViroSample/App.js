@@ -17,7 +17,7 @@ import {
 	TouchableHighlight
 } from "react-native"
 import { Router, Scene, Stack } from "react-native-router-flux"
-import { Login, Home, CropMap, ARMode } from "./js"
+import { Login, Home, CropMap, ARMode, AR } from "./js"
 
 import { ViroARSceneNavigator } from "react-viro"
 
@@ -69,7 +69,7 @@ export default class ViroSample extends Component {
 					/>
 					<Scene
 						key="ar"
-						component={ARMode}
+						component={AR}
 					/>
 				</Stack>
 			</Router>

@@ -22,34 +22,34 @@ class ARStart extends Component {
 	}
 
 	render() {
-		return (
-			<ViroARScene onTrackingUpdated={this._onInitialized}>
-				<ViroText
-					//scale={[0.5, 0.5, 0.5]}
-					position={[0, 0, -1]}
-					width={10} height={2}
-					extrusionDepth={4}
-					style={styles.helloWorldTextStyle}
-					materials={["frontMaterial", "backMaterial", "sideMaterial"]}
-					outerStroke={{type:"DropShadow", width:2, color:'#444444'}}
-					text={this.state.text}
-					onClick={this._viewPlotBase}
-				/>
-				<ViroNode position={[0,-1,0]} dragType="FixedToWorld" onDrag={()=>{}}>
-					<ViroImage
-							height={2}
-							width={2}
-							position={[0, 0, -1]}
-							source={require("./res/plot_base.png")}
-					/>
-				</ViroNode>
-				{/* {
+		//return (
+			// <ViroARScene onTrackingUpdated={this._onInitialized}>
+			// 	<ViroText
+			// 		//scale={[0.5, 0.5, 0.5]}
+			// 		position={[0, 0, -1]}
+			// 		width={10} height={2}
+			// 		extrusionDepth={4}
+			// 		style={styles.helloWorldTextStyle}
+			// 		materials={["frontMaterial", "backMaterial", "sideMaterial"]}
+			// 		outerStroke={{type:"DropShadow", width:2, color:'#444444'}}
+			// 		text={this.state.text}
+			// 		onClick={this._viewPlotBase}
+			// 	/>
+			// 	<ViroNode position={[0,-1,0]} dragType="FixedToWorld" onDrag={()=>{}}>
+			// 		<ViroImage
+			// 				height={2}
+			// 				width={2}
+			// 				position={[0, 0, -1]}
+			// 				source={require("./res/plot_base.png")}
+			// 		/>
+			// 	</ViroNode>
+				/* {
 				this.state.viewPlotBase ?
 					<ViroImage
 						source={require("./res/Dirt and Leaf Background.G03.watermarked.2k.png")}
 					/> : null
-				} */}
-			{/* <ViroButton
+				} */
+			/* <ViroButton
 				source={require("./res/icon_home.png")}
 				position={[0.0, 0.0, -2]}
         height={0.25}
@@ -67,9 +67,9 @@ class ARStart extends Component {
 				position={[0, -0.5, -2]}
         height={0.25}
     		width={0.25}
-			/> */}
-			</ViroARScene>
-		)
+			/> */
+			//</ViroARScene>
+	//	)
 	}
 
 	_onInitialized(state, reason) {

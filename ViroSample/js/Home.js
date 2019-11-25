@@ -6,7 +6,9 @@ export default function Home() {
 	return (
 		<View>
 			<Text onPress={() => Actions.map()}>Behold, our home page.</Text>
-			<Text onPress={() => Actions.ar()}>Behold, our map page.</Text>
+			<View>
+				<Text onPress={() => Actions.ar()}>Click here to go to AR mode.</Text>
+			</View>
 		</View>
 	)
 }
