@@ -17,7 +17,7 @@ import {
 	TouchableHighlight
 } from "react-native"
 import { Router, Scene, Stack } from "react-native-router-flux"
-import { Login, Home, CropMap, AR } from "./js"
+import { Login, Home, CropMap, ARMode } from "./js"
 
 import { ViroARSceneNavigator } from "react-viro"
 
@@ -31,23 +31,11 @@ var sharedProps = {
 	apiKey: "API_KEY_HERE"
 }
 
-// Sets the default scene you want for AR and VR
-var InitialARScene = require("./js/ARMode")
-// var InitialVRScene = require("./js/HelloWorldScene")
-
-var UNSET = "UNSET"
-var AR_NAVIGATOR_TYPE = "AR"
-
-// This determines which type of experience to launch in, or UNSET, if the user should
-// be presented with a choice of AR or VR. By default, we offer the user a choice.
-var defaultNavigatorType = UNSET
-
 export default class ViroSample extends Component {
 	constructor() {
 		super()
 
 		this.state = {
-			navigatorType: defaultNavigatorType,
 			sharedProps: sharedProps
 		}
 		//this._NonARRoot = this._NonARRoot.bind(this)
@@ -81,7 +69,7 @@ export default class ViroSample extends Component {
 					/>
 					<Scene
 						key="ar"
-						component={AR}
+						component={ARMode}
 					/>
 				</Stack>
 			</Router>
