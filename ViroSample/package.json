@@ -10,6 +10,7 @@
   "dependencies": {
     "firebase": "^7.4.0",
     "mercator-projection": "0.0.2",
+    "proj4": "^2.6.0",
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-google-signin": "^2.1.1",
@@ -22,7 +23,8 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-firestore": "^0.10.0",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "utm-latlng": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "7.7.2",
