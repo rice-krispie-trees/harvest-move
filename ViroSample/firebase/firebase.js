@@ -81,7 +81,6 @@ export class FirebaseWrapper {
       );
       const query = geocollection.near({ center: coordinates, radius: 2 });
       await query.get().then(snapshot => {
-        console.log(snapshot);
         let container = [];
         snapshot.forEach(doc => {
           container.push(doc.data());
@@ -97,7 +96,7 @@ export class FirebaseWrapper {
     try {
       await this._firestore
         .collection(collectionPath)
-        .orderBy("createdAt", "desc")
+        // .orderBy("createdAt", "desc")
         .onSnapshot(querySnapshot => {
           let container = [];
           querySnapshot.forEach(doc => {

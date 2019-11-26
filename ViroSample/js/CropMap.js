@@ -24,8 +24,6 @@ export default class CropMap extends Component {
 			],
 			plots: []
 		};
-		// this.generatePlots = this.generatePlots.bind(this);
-		// this.renderPlots = this.renderPlots.bind(this);
 	}
 
 	async componentDidMount() {
@@ -50,33 +48,16 @@ export default class CropMap extends Component {
 		//     loc.long
 		//   );
 		// });
-		await FirebaseWrapper.GetInstance().getNearbyPlots(
-			"Plots",
-			this.state.location.latitude,
-			this.state.location.longitude,
-			plots => this.setState({ plots })
-		);
+
+		// await FirebaseWrapper.GetInstance().getNearbyPlots(
+		// 	"Plots",
+		// 	this.state.location.latitude,
+		// 	this.state.location.longitude,
+		// 	plots => this.setState({ plots })
+		// );
+
+		await FirebaseWrapper.GetInstance().SetupCollectionListener('Plots', plots => this.setState({ plots }));
 	}
-
-	//   async generatePlots() {
-	//     await this.state.hardcoded.forEach(loc => {
-	//       FirebaseWrapper.GetInstance().createPlot(
-	//         "Plotz",
-	//         loc.name,
-	//         loc.lat,
-	//         loc.long
-	//       );
-	//     });
-	//   }
-
-	//   async renderPlots() {
-	//     await FirebaseWrapper.GetInstance().getNearbyPlots(
-	//       "Plotz",
-	//       this.state.location.latitude,
-	//       this.state.location.longitude,
-	//       plots => this.setState({ plots })
-	//     );
-	//   }
 
 	render() {
 		return (
@@ -96,8 +77,8 @@ export default class CropMap extends Component {
 				/>
 				{this.state.plots.map(plot => {
 					return (
-						<Marker key={plot.coordinates.name}
-							coordinate={{ latitude: plot.coordinates.latitude, longitude: plot.coordinates.longitude }}
+						<Marker key={plot.d.name}
+							coordinate={{ latitude: plot.d.coordinates.latitude, longitude: plot.d.coordinates.longitude }}
 						/>
 					)
 				})}
