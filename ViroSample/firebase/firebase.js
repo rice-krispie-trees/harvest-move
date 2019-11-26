@@ -60,14 +60,12 @@ export class FirebaseWrapper {
   async createPlot(collectionPath, name, plotLatitude, plotLongitude) {
     try {
       const geofirestore = new GeoFirestore(this._firestore);
-      const geocollection = new GeoCollectionReference(
-        geofirestore.collection(collectionPath)
-      );
-      const location = new firebase.firestore.GeoPoint(
+      const geocollection = geofirestore.collection(collectionPath);
+      const coordinates = new firebase.firestore.GeoPoint(
         plotLatitude,
         plotLongitude
       );
-      return await geocollection.add({ location, name });
+      await geocollection.add({ name, coordinates });
     } catch (error) {
       console.log("create plot failed", error);
     }
@@ -76,18 +74,17 @@ export class FirebaseWrapper {
   async getNearbyPlots(collectionPath, userLatitude, userLongitude, callback) {
     try {
       const geofirestore = new GeoFirestore(this._firestore);
-      const geocollection = new GeoCollectionReference(
-        geofirestore.collection(collectionPath)
-      );
-      const location = new firebase.firestore.GeoPoint(
+      const geocollection = geofirestore.collection(collectionPath);
+      const coordinates = new firebase.firestore.GeoPoint(
         userLatitude,
         userLongitude
       );
-      const query = new GeoQuery(
-        geocollection.near({ center: location, radius: 0.1 })
-      );
-      await query.get().then((snapshot = new GeoQuerySnapshot()) => {
-        console.log(snapshot.docs);
+      const query = geocollection.near({ center: coordinates, radius: 30 });
+      let gotten = await query.get();
+      console.log(gotten);
+      console.log(query);
+      await query.get().then(snapshot => {
+        console.log(snapshot);
         let container = [];
         snapshot.forEach(doc => {
           container.push(doc.data());
