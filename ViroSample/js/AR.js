@@ -13,4 +13,4 @@ const AR = props => {
 	)
 }
 
-export default AR
+module.exports = AR
