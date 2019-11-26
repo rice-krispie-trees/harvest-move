@@ -79,10 +79,7 @@ export class FirebaseWrapper {
         userLatitude,
         userLongitude
       );
-      const query = geocollection.near({ center: coordinates, radius: 30 });
-      let gotten = await query.get();
-      console.log(gotten);
-      console.log(query);
+      const query = geocollection.near({ center: coordinates, radius: 2 });
       await query.get().then(snapshot => {
         console.log(snapshot);
         let container = [];
