@@ -72,7 +72,7 @@ export default class CropMap extends Component {
 			>
 				<Marker
 					coordinate={this.state.location}
-					pinColor="blue"
+					pinColor="#4CB8EF"
 					onPress={() => this.props.navigation.navigate("Home")}
 				/>
 				{this.state.plots.map(plot => {
