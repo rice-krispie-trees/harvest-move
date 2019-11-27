@@ -111,6 +111,8 @@ class ARMode extends Component {
 					"PeetPlotz",
 					position.coords.latitude,
 					position.coords.longitude,
+					2,
+					50,
 					plots => this.setState({ plots })
 				)
 			},

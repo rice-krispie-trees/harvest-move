@@ -71,7 +71,14 @@ export class FirebaseWrapper {
 		}
 	}
 
-	async getNearbyPlots(collectionPath, userLatitude, userLongitude, callback) {
+	async getNearbyPlots(
+		collectionPath,
+		userLatitude,
+		userLongitude,
+		radius,
+		limit,
+		callback
+	) {
 		try {
 			const geofirestore = new GeoFirestore(this._firestore)
 			const geocollection = geofirestore.collection(collectionPath)
@@ -81,8 +88,8 @@ export class FirebaseWrapper {
 			)
 			const query = geocollection.near({
 				center: coordinates,
-				radius: 2,
-				limit: 50
+				radius,
+				limit
 			})
 			await query.get().then(snapshot => {
 				let container = []
