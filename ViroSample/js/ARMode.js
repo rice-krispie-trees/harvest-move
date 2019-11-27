@@ -89,7 +89,7 @@ class ARMode extends Component {
 			selfLong: 0,
 			loaded: false,
 			error: null,
-			plots: plots,
+			plots: [],
 			anchorsFound: []
 		}
 		// bind 'this' to functions
@@ -100,16 +100,27 @@ class ARMode extends Component {
 	}
 
 	async componentDidMount() {
+		console.log("BEFORE", this.state.selfLat)
 		await navigator.geolocation.getCurrentPosition(
 			position => {
 				this.setState({
 					selfLat: position.coords.latitude,
 					selfLong: position.coords.longitude
 				})
+				FirebaseWrapper.GetInstance().getNearbyPlots(
+					"PeetPlotz",
+					position.coords.latitude,
+					position.coords.longitude,
+					2,
+					50,
+					plots => this.setState({ plots })
+				)
 			},
 			error => this.setState({ error: error.message }),
 			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 		)
+		console.log("AFTER", this.state.selfLat)
+
 		this.setState({ loaded: true })
 	}
 
@@ -133,7 +144,10 @@ class ARMode extends Component {
 	}
 
 	_getARCoords(plot, y) {
-		const plotMerc = this._latLongToMerc(plot.lat, plot.long)
+		const plotMerc = this._latLongToMerc(
+			plot.coordinates.latitude,
+			plot.coordinates.longitude
+		)
 		const selfMerc = this._latLongToMerc(
 			this.state.selfLat,
 			this.state.selfLong
@@ -143,16 +157,14 @@ class ARMode extends Component {
 		return [plotARX, y, -plotARZ]
 	}
 
-	_onSelected(anchor) {
+	async _onSelected(anchor) {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
-		console.log(lat, lng)
-		const plot = new Plot(lat, lng)
-		const newPlots = [...this.state.plots]
-		newPlots.push(plot)
-		console.log(this)
-		this.setState({ plots: newPlots })
-		// FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-		// FirebaseWrapper.GetInstance().createPlot("Plots", "a name", lat, long)
+		await FirebaseWrapper.GetInstance().createPlot(
+			"PeetPlotz",
+			"NEWPLOT",
+			lat,
+			lng
+		)
 	}
 
 	_plotHere(anchor) {
