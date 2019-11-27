@@ -58,3 +58,14 @@ buck-out/
 
 #Pod Files
 Pods/
+
+#IOS
+Podfile
+Podfile.lock
+project.pbxproj
+ViroSample.xcodeproj/
+ViroSample.xcworkspace/
+ViroSample/ios/ViroSample/
+ViroSample/ios/ngrok_launch.sh
+ViroSample/ios/ngrok_term_launch.command
+ViroSample/ios/proj_add_shell_script.rb
