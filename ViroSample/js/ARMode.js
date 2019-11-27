@@ -89,7 +89,7 @@ class ARMode extends Component {
 			selfLong: 0,
 			loaded: false,
 			error: null,
-			plots: plots,
+			plots: [],
 			anchorsFound: []
 		}
 		// bind 'this' to functions
