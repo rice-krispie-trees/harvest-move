@@ -89,28 +89,60 @@ class ARMode extends Component {
 			selfLong: 0,
 			loaded: false,
 			error: null,
-			plots: plots,
+			plots: [],
 			anchorsFound: []
 		}
 		// bind 'this' to functions
-		this._onInitialized = this._onInitialized.bind(this)
+		// this._onInitialized = this._onInitialized.bind(this)
 		this._getARCoords = this._getARCoords.bind(this)
 		this._onSelected = this._onSelected.bind(this)
 		this._onAnchorFound = this._onAnchorFound.bind(this)
 	}
 
 	async componentDidMount() {
+		console.log("BEFORE", this.state.selfLat)
 		await navigator.geolocation.getCurrentPosition(
 			position => {
 				this.setState({
 					selfLat: position.coords.latitude,
 					selfLong: position.coords.longitude
 				})
+				FirebaseWrapper.GetInstance().getNearbyPlots(
+					"PeetPlotz",
+					position.coords.latitude,
+					position.coords.longitude,
+					plots => this.setState({ plots })
+				)
 			},
 			error => this.setState({ error: error.message }),
 			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 		)
+		console.log("AFTER", this.state.selfLat)
+
 		this.setState({ loaded: true })
+
+		// const plots = []
+		// for (let i = 40.704546; i < 40.705547; i += 0.00005) {
+		// 	for (let j = -74.009598; j < -74.008598; j += 0.00005) {
+		// 		plots.push({
+		// 			name: `Fullstack${i},${j}`,
+		// 			latitude: i,
+		// 			longitude: j
+		// 		})
+		// 	}
+		// }
+
+		// await Promise.all(
+		// 	plots.map(plot => {
+		// 		FirebaseWrapper.GetInstance().createPlot(
+		// 			"PeetPlotz",
+		// 			plot.name,
+		// 			plot.latitude,
+		// 			plot.longitude
+		// 		)
+		// 	})
+		// )
+		// this.setState({ text: "DATABASE SEEDED!!" })
 	}
 
 	_latLongToMerc(lat_deg, lon_deg) {
@@ -133,7 +165,10 @@ class ARMode extends Component {
 	}
 
 	_getARCoords(plot, y) {
-		const plotMerc = this._latLongToMerc(plot.lat, plot.long)
+		const plotMerc = this._latLongToMerc(
+			plot.coordinates.latitude,
+			plot.coordinates.longitude
+		)
 		const selfMerc = this._latLongToMerc(
 			this.state.selfLat,
 			this.state.selfLong
@@ -143,16 +178,20 @@ class ARMode extends Component {
 		return [plotARX, y, -plotARZ]
 	}
 
-	_onSelected(anchor) {
+	async _onSelected(anchor) {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
-		console.log(lat, lng)
-		const plot = new Plot(lat, lng)
-		const newPlots = [...this.state.plots]
-		newPlots.push(plot)
-		console.log(this)
-		this.setState({ plots: newPlots })
-		// FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-		// FirebaseWrapper.GetInstance().createPlot("Plots", "a name", lat, long)
+		// console.log(lat, lng)
+		// const plot = new Plot(lat, lng)
+		// const newPlots = [...this.state.plots]
+		// newPlots.push(plot)
+		// console.log(this)
+		// this.setState({ plots: newPlots })
+		await FirebaseWrapper.GetInstance().createPlot(
+			"PeetPlotz",
+			"NEWPLOT",
+			lat,
+			lng
+		)
 	}
 
 	_plotHere(anchor) {
@@ -226,15 +265,15 @@ class ARMode extends Component {
 		)
 	}
 
-	_onInitialized(state, reason) {
-		if (state == ViroConstants.TRACKING_NORMAL) {
-			if (this.state.loaded) this.setState({ text: "Done" })
-			else this.setState({ text: "Not Done" })
-		} else if (state == ViroConstants.TRACKING_NONE) {
-			// Handle loss of tracking
-			console.error(reason)
-		}
-	}
+	// _onInitialized(state, reason) {
+	// 	if (state == ViroConstants.TRACKING_NORMAL) {
+	// 		if (this.state.loaded) this.setState({ text: "Done" })
+	// 		else this.setState({ text: "Not Done" })
+	// 	} else if (state == ViroConstants.TRACKING_NONE) {
+	// 		// Handle loss of tracking
+	// 		console.error(reason)
+	// 	}
+	// }
 
 	_switchARScene(newScene) {
 		return <ViroARSceneNavigator initialScene={{ scene: newScene }} />

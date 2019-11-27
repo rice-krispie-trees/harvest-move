@@ -47,30 +47,16 @@ export default class ViroSample extends Component {
 	// Replace this function with the contents of _getVRNavigator() or _getARNavigator()
 	// if you are building a specific type of experience.
 	render() {
+		//this happens only here -- it sets up the DB
 		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-	// 	if (this.state.navigatorType == UNSET) {
-	// 		return this._NonARRoot()
-	// 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
-	// 		return this._getARNavigator()
-	// 	}
-	// }
 
-	// Presents the user with a choice of an AR or VR experience
-	//_NonARRoot() {
 		return (
 			<Router>
 				<Stack key="root">
 					{/* <Scene key="login" component={Login} title="Login" /> */}
 					<Scene key="home" component={Home} title="Home" />
-					<Scene
-						key="map"
-						component={CropMap}
-						title="My Map"
-					/>
-					<Scene
-						key="ar"
-						component={AR}
-					/>
+					<Scene key="map" component={CropMap} title="My Map" />
+					<Scene key="ar" component={AR} />
 				</Stack>
 			</Router>
 
