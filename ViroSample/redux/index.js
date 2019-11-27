@@ -1,37 +1,48 @@
-// import { createStore, applyMiddleware, compose, combineReducers } from "redux"
-// import { firebaseReducer } from "react-redux-firebase"
-// import { createLogger } from "redux-logger"
-// import thunkMiddleware from "redux-thunk"
-// // import {composeWithDevTools} from 'redux-devtools-extension'
+import { combineReducers } from "redux";
+import { firestoreReducer, getFirestore } from "redux-firestore";
+import { firebaseReducer, getFirebase } from "react-redux-firebase";
+import { FirebaseWrapper } from ".../firebase/firebase";
 
-// const rootReducer = combineReducers({ firebase: firebaseReducer })
+const GOT_PLOTS = "GOT_PLOTS";
 
-import { compose, createStore } from "redux"
-import RNFirebase from "react-native-firebase"
-import { reactReduxFirebase } from "react-redux-firebase"
-import thunk from "redux-thunk"
-import makeRootReducer from "./reducers"
+const gotPlots = plots => ({ type: GOT_PLOTS, plots });
 
-const reactNativeFirebaseConfig = {
-	debug: true
-}
+const plotState = {
+  areaPlots: []
+};
 
-const reduxFirebaseConfig = {
-	userProfile: "User" // save users profiles to 'users' collection
-}
+export const getPlots = (latitude, longitude, radius, limit) => async (
+  dispatch,
+  getState,
+  { getFirebase, getFirestore }
+) => {
+  try {
+    await FirebaseWrapper.GetInstance().getNearbyPlots(
+      collectionPath,
+      latitude,
+      longitude,
+      radius,
+      limit,
+      plots => dispatch(gotPlots(plots))
+    );
+  } catch (error) {
+    console.log("getPlots thunk failed", error);
+  }
+};
 
-export default (initialState = { firebase: {} }) => {
-	// initialize firebase
-	const firebase = RNFirebase.initializeApp(reactNativeFirebaseConfig)
+const plotReducer = (state = plotState, action) => {
+  switch (action.type) {
+    case GOT_PLOTS:
+      return { ...state, areaPlots: action.plots };
+    default:
+      return state;
+  }
+};
 
-	const store = createStore(
-		makeRootReducer(),
-		initialState,
-		compose(
-			reactReduxFirebase(firebase, reduxFirebaseConfig) // pass initialized react-native-firebase app instance
-			// applyMiddleware can be placed here
-		)
-	)
+const rootReducer = combineReducers({
+  plots: plotReducer,
+  firestore: firestoreReducer,
+  firebase: firebaseReducer
+});
 
-	return store
-}
+export default rootReducer;
