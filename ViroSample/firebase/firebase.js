@@ -65,7 +65,16 @@ export class FirebaseWrapper {
 				plotLatitude,
 				plotLongitude
 			)
-			await geocollection.add({ name, coordinates })
+			await geocollection.add({
+				name,
+				coordinates,
+				datePlanted: null,
+				ripe: false,
+				sprouted: false,
+				waterCount: 0,
+				wateredDate: null,
+				alive: false
+			})
 		} catch (error) {
 			console.log("create plot failed", error)
 		}
