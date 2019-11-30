@@ -1,7 +1,7 @@
 "use strict"
 
 import React, { Component } from "react"
-import { StyleSheet } from "react-native"
+import { StyleSheet, Vibration } from "react-native"
 
 import {
 	ViroARScene,
@@ -13,7 +13,8 @@ import {
 	ViroARPlaneSelector,
 	ViroAmbientLight,
 	ViroBox,
-	ViroButton
+	ViroButton,
+	ViroParticleEmitter
 } from "react-viro"
 
 import { PLOT_WIDTH, PLOT_LENGTH, PLOT_HEIGHT } from "./constants"
@@ -94,7 +95,8 @@ class ARMode extends Component {
 			anchorsFound: [],
 			water: false,
 			seeds: false,
-			pick: false
+			pick: false,
+			animateSeeds: false
 		}
 		// bind 'this' to functions
 		this._onInitialized = this._onInitialized.bind(this)
@@ -170,13 +172,16 @@ class ARMode extends Component {
 		return function(isHovering, position, source) {
 			if (isHovering) {
 				that.setState({
-					water: !plot.watered,
+					water: plot.datePlanted && !plot.watered ? plot : null,
 					seeds: !plot.datePlanted ? plot : null,
-					pick: plot.ripe
+					pick: plot.ripe ? plot : null
 				})
 			} else {
-				that.setState({ text: "not working" })
-				return <ViroText text={that.state.text} />
+				that.setState({
+					water: null,
+					seeds: null,
+					pick: null
+				})
 			}
 		}
 	}
@@ -221,14 +226,24 @@ class ARMode extends Component {
 	}
 
 	_onClick(plot) {
-		return function() {
-			if (this.state.seeds === plot) {
-				//make the plot seeded in the DB, reduce # of seeds in inventory
-			} else if (this.state.water === plot) {
-				//make the plot watered in the DB
-			} else if (this.state.pick === plot) {
-				//make the plot unplanted in the DB, add crop to basket
-			}
+		console.log(
+			"I regret to inform you that the outer onClick is being invoked."
+		)
+		// return function(position, source) {
+		// 	console.log(
+		// 		"I regret to inform you that the inner onClick is being invoked."
+		// 	)
+		if (this.state.seeds === plot) {
+			//make the plot seeded in the DB, reduce # of seeds in inventory
+			Vibration.vibrate()
+			Vibration.cancel()
+			this.setState({ animateSeeds: true })
+			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
+		} else if (this.state.water === plot) {
+			//make the plot watered in the DB
+		} else if (this.state.pick === plot) {
+			//make the plot unplanted in the DB, add crop to basket
+			//}
 		}
 	}
 
@@ -240,9 +255,19 @@ class ARMode extends Component {
 				anchorDetectionTypes="PlanesHorizontal"
 				onAnchorFound={this._onAnchorFound}
 			>
+				<ViroParticleEmitter
+					position={[0, 0, -1]}
+					duration={2000}
+					run={this.state.animateSeeds}
+					image={{
+						source: require("./res/particle_firework.png"),
+						height: 0.1,
+						width: 0.1
+					}}
+				/>
 				{this.state.plots.map(plot => (
 					<ViroBox
-						onClick={this._onClick(plot)}
+						onClick={(position, source) => this._onClick(plot)}
 						height={0.05}
 						width={0.05}
 						length={0.05}
@@ -329,9 +354,9 @@ class ARMode extends Component {
 		return <ViroARSceneNavigator initialScene={{ scene: newScene }} />
 	}
 
-	_onClick(sceneType, position, source) {
-		this.setState({ sceneType: sceneType })
-	}
+	// _onClick(sceneType, position, source) {
+	// 	this.setState({ sceneType: sceneType })
+	// }
 }
 
 var styles = StyleSheet.create({
