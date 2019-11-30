@@ -8,6 +8,8 @@
  */
 
 import React, { Component } from "react"
+import { Provider } from "react-redux"
+
 import {
 	AppRegistry,
 	Text,
@@ -18,6 +20,7 @@ import {
 } from "react-native"
 import { Router, Scene, Stack } from "react-native-router-flux"
 import { Login, Home, CropMap, ARMode, AR } from "./js"
+import store from "./store"
 
 import { ViroARSceneNavigator } from "react-viro"
 
@@ -48,31 +51,26 @@ export default class ViroSample extends Component {
 	// if you are building a specific type of experience.
 	render() {
 		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-	// 	if (this.state.navigatorType == UNSET) {
-	// 		return this._NonARRoot()
-	// 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
-	// 		return this._getARNavigator()
-	// 	}
-	// }
+		// 	if (this.state.navigatorType == UNSET) {
+		// 		return this._NonARRoot()
+		// 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
+		// 		return this._getARNavigator()
+		// 	}
+		// }
 
-	// Presents the user with a choice of an AR or VR experience
-	//_NonARRoot() {
+		// Presents the user with a choice of an AR or VR experience
+		//_NonARRoot() {
 		return (
-			<Router>
-				<Stack key="root">
-					{/* <Scene key="login" component={Login} title="Login" /> */}
-					<Scene key="home" component={Home} title="Home" />
-					<Scene
-						key="map"
-						component={CropMap}
-						title="My Map"
-					/>
-					<Scene
-						key="ar"
-						component={AR}
-					/>
-				</Stack>
-			</Router>
+			<Provider store={store}>
+				<Router>
+					<Stack key="root">
+						{/* <Scene key="login" component={Login} title="Login" /> */}
+						<Scene key="home" component={Home} title="Home" />
+						<Scene key="map" component={CropMap} title="My Map" />
+						<Scene key="ar" component={AR} />
+					</Stack>
+				</Router>
+			</Provider>
 
 			// <View style={localStyles.outer}>
 			// 	<View style={localStyles.inner}>
