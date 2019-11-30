@@ -235,16 +235,19 @@ class ARMode extends Component {
 						width: 0.1
 					}}
 				/>
-				{this.state.plots.map(plot => (
-					<ViroBox
-						onClick={(position, source) => this._onClick(plot)}
-						height={0.05}
-						width={0.05}
-						length={0.05}
-						position={this._getARCoords(plot, 0)}
-						materials={this._getPlotButton(plot)}
-					/>
-				))}
+				{this.state.plots.map(plot => {
+					console.log("rendering:", plot)
+					return (
+						<ViroBox
+							onClick={(position, source) => this._onClick(plot)}
+							height={0.05}
+							width={0.05}
+							length={0.05}
+							position={this._getARCoords(plot, 0)}
+							materials={this._getPlotButton(plot)}
+						/>
+					)
+				})}
 				{this.state.anchorsFound.map(anchor => (
 					<ViroBox
 						onHover={this._onHover(anchor)}
