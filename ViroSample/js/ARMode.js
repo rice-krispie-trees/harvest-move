@@ -1,7 +1,7 @@
 "use strict"
 
 import React, { Component } from "react"
-import { StyleSheet } from "react-native"
+import { StyleSheet, Vibration } from "react-native"
 
 import {
 	ViroARScene,
@@ -12,7 +12,9 @@ import {
 	ViroARPlane,
 	ViroARPlaneSelector,
 	ViroAmbientLight,
-	ViroBox
+	ViroBox,
+	ViroButton,
+	ViroParticleEmitter
 } from "react-viro"
 
 import { PLOT_WIDTH, PLOT_LENGTH, PLOT_HEIGHT } from "./constants"
@@ -90,13 +92,19 @@ class ARMode extends Component {
 			loaded: false,
 			error: null,
 			plots: [],
-			anchorsFound: []
+			anchorsFound: [],
+			water: false,
+			seeds: false,
+			pick: false,
+			animateSeeds: false
 		}
 		// bind 'this' to functions
 		this._onInitialized = this._onInitialized.bind(this)
 		this._getARCoords = this._getARCoords.bind(this)
 		this._onSelected = this._onSelected.bind(this)
 		this._onAnchorFound = this._onAnchorFound.bind(this)
+		this._onHover = this._onHover.bind(this)
+		this._onClick = this._onClick.bind(this)
 	}
 
 	async componentDidMount() {
@@ -157,6 +165,27 @@ class ARMode extends Component {
 		return [plotARX, y, -plotARZ]
 	}
 
+	_onHover(anchor) {
+		const plot = this._plotHere(anchor)
+		const that = this
+		// console.log(this.state.seeds)
+		return function(isHovering, position, source) {
+			if (isHovering) {
+				that.setState({
+					water: plot.datePlanted && !plot.watered ? plot : null,
+					seeds: !plot.datePlanted ? plot : null,
+					pick: plot.ripe ? plot : null
+				})
+			} else {
+				that.setState({
+					water: null,
+					seeds: null,
+					pick: null
+				})
+			}
+		}
+	}
+
 	async _onSelected(anchor) {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
 		await FirebaseWrapper.GetInstance().createPlot(
@@ -189,6 +218,35 @@ class ARMode extends Component {
 		} else console.log("plotless anchor.")
 	}
 
+	_getPlotButton(plot) {
+		console.log("in the plot button function")
+		if (this.state.water === plot) return ["waterButton"]
+		else if (this.state.seeds === plot) return ["seedButton"]
+		return ["frontMaterial"]
+	}
+
+	_onClick(plot) {
+		console.log(
+			"I regret to inform you that the outer onClick is being invoked."
+		)
+		// return function(position, source) {
+		// 	console.log(
+		// 		"I regret to inform you that the inner onClick is being invoked."
+		// 	)
+		if (this.state.seeds === plot) {
+			//make the plot seeded in the DB, reduce # of seeds in inventory
+			Vibration.vibrate()
+			Vibration.cancel()
+			this.setState({ animateSeeds: true })
+			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
+		} else if (this.state.water === plot) {
+			//make the plot watered in the DB
+		} else if (this.state.pick === plot) {
+			//make the plot unplanted in the DB, add crop to basket
+			//}
+		}
+	}
+
 	render() {
 		let hoeSelected = true
 		return (
@@ -197,16 +255,29 @@ class ARMode extends Component {
 				anchorDetectionTypes="PlanesHorizontal"
 				onAnchorFound={this._onAnchorFound}
 			>
+				<ViroParticleEmitter
+					position={[0, 0, -1]}
+					duration={2000}
+					run={this.state.animateSeeds}
+					image={{
+						source: require("./res/particle_firework.png"),
+						height: 0.1,
+						width: 0.1
+					}}
+				/>
 				{this.state.plots.map(plot => (
 					<ViroBox
+						onClick={(position, source) => this._onClick(plot)}
 						height={0.05}
 						width={0.05}
 						length={0.05}
 						position={this._getARCoords(plot, 0)}
+						materials={this._getPlotButton(plot)}
 					/>
 				))}
 				{this.state.anchorsFound.map(anchor => (
 					<ViroBox
+						onHover={this._onHover(anchor)}
 						height={PLOT_HEIGHT}
 						width={PLOT_WIDTH}
 						length={PLOT_LENGTH}
@@ -224,6 +295,7 @@ class ARMode extends Component {
 						onPlaneSelected={this._onSelected}
 					>
 						<ViroBox
+							// onHover={this._onHover(anchor)}
 							height={0.0001}
 							width={0.8}
 							length={0.8}
@@ -233,6 +305,36 @@ class ARMode extends Component {
 					</ViroARPlaneSelector>
 				) : (
 					""
+				)}
+				{this.state.water ? (
+					<ViroButton
+						source={require("./res/btn_white.png")}
+						// position={[-0.25, 0, -1]}
+						height={0.1}
+						width={0.1}
+					/>
+				) : (
+					<ViroText />
+				)}
+				{/* {this.state.seeds ? (
+					<ViroButton
+						source={require("./res/btn_white.png")}
+						position={this.state.seeds}
+						height={0.1}
+						width={0.1}
+					/>
+				) : (
+					<ViroText />
+				)} */}
+				{this.state.pick ? (
+					<ViroButton
+						source={require("./res/btn_white.png")}
+						// position={[-0.25, 0, -1]}
+						height={0.1}
+						width={0.1}
+					/>
+				) : (
+					<ViroText />
 				)}
 			</ViroARScene>
 		)
@@ -252,9 +354,9 @@ class ARMode extends Component {
 		return <ViroARSceneNavigator initialScene={{ scene: newScene }} />
 	}
 
-	_onClick(sceneType, position, source) {
-		this.setState({ sceneType: sceneType })
-	}
+	// _onClick(sceneType, position, source) {
+	// 	this.setState({ sceneType: sceneType })
+	// }
 }
 
 var styles = StyleSheet.create({
@@ -270,6 +372,12 @@ var styles = StyleSheet.create({
 ViroMaterials.createMaterials({
 	dirt: {
 		diffuseTexture: require("./res/plot_base.png")
+	},
+	waterButton: {
+		diffuseColor: "#03c6fc"
+	},
+	seedButton: {
+		diffuseColor: "#807955"
 	},
 	frontMaterial: {
 		diffuseColor: "#FFFFFF"
