@@ -57,7 +57,13 @@ export class FirebaseWrapper {
 		}
 	}
 
-	async createPlot(collectionPath, name, plotLatitude, plotLongitude) {
+	async createPlot(
+		collectionPath,
+		name,
+		plotLatitude,
+		plotLongitude,
+		callback
+	) {
 		try {
 			const geofirestore = new GeoFirestore(this._firestore)
 			const geocollection = geofirestore.collection(collectionPath)
@@ -65,7 +71,7 @@ export class FirebaseWrapper {
 				plotLatitude,
 				plotLongitude
 			)
-			await geocollection.add({
+			const newDoc = await geocollection.add({
 				name,
 				coordinates,
 				datePlanted: null,
@@ -75,6 +81,7 @@ export class FirebaseWrapper {
 				wateredDate: null,
 				alive: false
 			})
+			await newDoc.get().then(doc => callback(doc.data()))
 		} catch (error) {
 			console.log("create plot failed", error)
 		}
