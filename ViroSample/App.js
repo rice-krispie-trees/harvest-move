@@ -7,180 +7,204 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-import React, { Component } from "react"
+import React, { Component } from "react";
 import {
-	AppRegistry,
-	Text,
-	View,
-	StyleSheet,
-	PixelRatio,
-	TouchableHighlight
-} from "react-native"
-import { Router, Scene, Stack } from "react-native-router-flux"
-import { Login, Home, CropMap, ARMode, AR } from "./js"
+  AppRegistry,
+  Text,
+  View,
+  StyleSheet,
+  PixelRatio,
+  TouchableHighlight
+} from "react-native";
+import { Router, Scene, Stack } from "react-native-router-flux";
+import { Login, Home, DropMap, ARMode, AR } from "./js";
 
-import { ViroARSceneNavigator } from "react-viro"
+import { ViroARSceneNavigator } from "react-viro";
 
-import { firebaseConfig } from "./firebase/config"
-import { FirebaseWrapper } from "./firebase/firebase"
+import { firebaseConfig } from "./firebase/config";
+import { FirebaseWrapper } from "./firebase/firebase";
+import * as firebase from "firebase";
+// import firebase from "firebase/app";
+// import "firebase/auth";
+// import "firebase/firestore";
+// import "firebase/functions";
+import store from "./store";
+
+import { Provider } from "react-redux";
+import { compose } from "redux";
+import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import { createFirestoreInstance } from "redux-firestore";
+
+const rrfConfig = {
+  userProfile: "users",
+  useFirestoreForProfile: true
+};
+
+// firebase.initializeApp(firebaseConfig);
+// firebase.firestore();
+// firebase.functions();
+
+FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
+
+const rrfProps = {
+  firebase,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance
+};
 
 /*
  TODO: Insert your API key below
  */
 var sharedProps = {
-	apiKey: "API_KEY_HERE"
-}
+  apiKey: "API_KEY_HERE"
+};
 
 export default class ViroSample extends Component {
-	constructor() {
-		super()
+  constructor() {
+    super();
 
-		this.state = {
-			sharedProps: sharedProps
-		}
-		//this._NonARRoot = this._NonARRoot.bind(this)
-		this._getARNavigator = this._getARNavigator.bind(this)
-		this._goToAR = this._goToAR.bind(this)
-		this._exitViro = this._exitViro.bind(this)
-	}
+    this.state = {
+      sharedProps: sharedProps
+    };
+    //this._NonARRoot = this._NonARRoot.bind(this)
+    this._getARNavigator = this._getARNavigator.bind(this);
+    this._goToAR = this._goToAR.bind(this);
+    this._exitViro = this._exitViro.bind(this);
+  }
 
-	// Replace this function with the contents of _getVRNavigator() or _getARNavigator()
-	// if you are building a specific type of experience.
-	render() {
-		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-	// 	if (this.state.navigatorType == UNSET) {
-	// 		return this._NonARRoot()
-	// 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
-	// 		return this._getARNavigator()
-	// 	}
-	// }
+  // Replace this function with the contents of _getVRNavigator() or _getARNavigator()
+  // if you are building a specific type of experience.
+  render() {
+    // 	if (this.state.navigatorType == UNSET) {
+    // 		return this._NonARRoot()
+    // 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
+    // 		return this._getARNavigator()
+    // 	}
+    // }
 
-	// Presents the user with a choice of an AR or VR experience
-	//_NonARRoot() {
-		return (
-			<Router>
-				<Stack key="root">
-					{/* <Scene key="login" component={Login} title="Login" /> */}
-					<Scene key="home" component={Home} title="Home" />
-					<Scene
-						key="map"
-						component={CropMap}
-						title="My Map"
-					/>
-					<Scene
-						key="ar"
-						component={AR}
-					/>
-				</Stack>
-			</Router>
+    // Presents the user with a choice of an AR or VR experience
+    //_NonARRoot() {
+    return (
+      <Provider store={store}>
+        <ReactReduxFirebaseProvider {...rrfProps}>
+          <Router>
+            <Stack key="root">
+              {/* <Scene key="login" component={Login} title="Login" /> */}
+              <Scene key="home" component={Home} title="Home" />
+              <Scene key="map" component={DropMap} title="My Map" />
+              <Scene key="ar" component={AR} />
+            </Stack>
+          </Router>
+        </ReactReduxFirebaseProvider>
+      </Provider>
+      // <View style={localStyles.outer}>
+      // 	<View style={localStyles.inner}>
+      // 		<Text style={localStyles.titleText}>
+      // 			Choose your desired experience:
+      // 		</Text>
 
-			// <View style={localStyles.outer}>
-			// 	<View style={localStyles.inner}>
-			// 		<Text style={localStyles.titleText}>
-			// 			Choose your desired experience:
-			// 		</Text>
+      // 		<TouchableHighlight
+      // 			style={localStyles.buttons}
+      // 			onPress={this._getExperienceButtonOnPress(AR_NAVIGATOR_TYPE)}
+      // 			underlayColor={"#68a0ff"}
+      // 		>
+      // 			<Text style={localStyles.buttonText}>AR</Text>
+      // 		</TouchableHighlight>
 
-			// 		<TouchableHighlight
-			// 			style={localStyles.buttons}
-			// 			onPress={this._getExperienceButtonOnPress(AR_NAVIGATOR_TYPE)}
-			// 			underlayColor={"#68a0ff"}
-			// 		>
-			// 			<Text style={localStyles.buttonText}>AR</Text>
-			// 		</TouchableHighlight>
+      // 		<TouchableHighlight
+      // 			style={localStyles.buttons}
+      // 			onPress={this._getExperienceButtonOnPress(VR_NAVIGATOR_TYPE)}
+      // 			underlayColor={"#68a0ff"}
+      // 		>
+      // 			<Text style={localStyles.buttonText}>VR</Text>
+      // 		</TouchableHighlight>
+      // 	</View>
+      // </View>
+    );
+  }
 
-			// 		<TouchableHighlight
-			// 			style={localStyles.buttons}
-			// 			onPress={this._getExperienceButtonOnPress(VR_NAVIGATOR_TYPE)}
-			// 			underlayColor={"#68a0ff"}
-			// 		>
-			// 			<Text style={localStyles.buttonText}>VR</Text>
-			// 		</TouchableHighlight>
-			// 	</View>
-			// </View>
-		)
-	}
+  // Returns the ViroARSceneNavigator which will start the AR experience
+  _getARNavigator() {
+    return (
+      <ViroARSceneNavigator
+        {...this.state.sharedProps}
+        initialScene={{ scene: InitialARScene }}
+      />
+    );
+  }
 
-	// Returns the ViroARSceneNavigator which will start the AR experience
-	_getARNavigator() {
-		return (
-			<ViroARSceneNavigator
-				{...this.state.sharedProps}
-				initialScene={{ scene: InitialARScene }}
-			/>
-		)
-	}
+  // This function returns an anonymous/lambda function to be used
+  // by the experience selector buttons
+  _goToAR(navigatorType) {
+    return () => {
+      this.setState({
+        navigatorType: AR_NAVIGATOR_TYPE
+      });
+    };
+  }
 
-	// This function returns an anonymous/lambda function to be used
-	// by the experience selector buttons
-	_goToAR(navigatorType) {
-		return () => {
-			this.setState({
-				navigatorType: AR_NAVIGATOR_TYPE
-			})
-		}
-	}
-
-	// This function "exits" Viro by setting the navigatorType to UNSET.
-	_exitViro() {
-		this.setState({
-			navigatorType: UNSET
-		})
-	}
+  // This function "exits" Viro by setting the navigatorType to UNSET.
+  _exitViro() {
+    this.setState({
+      navigatorType: UNSET
+    });
+  }
 }
 
 var localStyles = StyleSheet.create({
-	viroContainer: {
-		flex: 1,
-		backgroundColor: "black"
-	},
-	outer: {
-		flex: 1,
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: "black"
-	},
-	inner: {
-		flex: 1,
-		flexDirection: "column",
-		alignItems: "center",
-		backgroundColor: "black"
-	},
-	titleText: {
-		paddingTop: 30,
-		paddingBottom: 20,
-		color: "#fff",
-		textAlign: "center",
-		fontSize: 25
-	},
-	buttonText: {
-		color: "#fff",
-		textAlign: "center",
-		fontSize: 20
-	},
-	buttons: {
-		height: 80,
-		width: 150,
-		paddingTop: 20,
-		paddingBottom: 20,
-		marginTop: 10,
-		marginBottom: 10,
-		backgroundColor: "#68a0cf",
-		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: "#fff"
-	},
-	exitButton: {
-		height: 50,
-		width: 100,
-		paddingTop: 10,
-		paddingBottom: 10,
-		marginTop: 10,
-		marginBottom: 10,
-		backgroundColor: "#68a0cf",
-		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: "#fff"
-	}
-})
+  viroContainer: {
+    flex: 1,
+    backgroundColor: "black"
+  },
+  outer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "black"
+  },
+  inner: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    backgroundColor: "black"
+  },
+  titleText: {
+    paddingTop: 30,
+    paddingBottom: 20,
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 25
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 20
+  },
+  buttons: {
+    height: 80,
+    width: 150,
+    paddingTop: 20,
+    paddingBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: "#68a0cf",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#fff"
+  },
+  exitButton: {
+    height: 50,
+    width: 100,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: "#68a0cf",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#fff"
+  }
+});
 
-module.exports = ViroSample
+module.exports = ViroSample;

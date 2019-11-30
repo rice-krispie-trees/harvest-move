@@ -13,6 +13,7 @@
     "mercator-projection": "0.0.2",
     "proj4": "^2.6.0",
     "react": "16.8.3",
+    "react-hook-thunk-reducer": "^0.2.1",
     "react-native": "0.59.9",
     "react-native-google-signin": "^2.1.1",
     "react-native-maps": "^0.26.1",
@@ -25,6 +26,7 @@
     "redux-firestore": "^0.10.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
     "utm-latlng": "^1.0.5"
   },
   "devDependencies": {
