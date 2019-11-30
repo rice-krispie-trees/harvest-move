@@ -235,7 +235,7 @@ class ARMode extends Component {
 						width: 0.1
 					}}
 				/>
-				{this.state.plots.map(plot => {
+				{this.props.plots.map(plot => {
 					console.log("rendering:", plot)
 					return (
 						<ViroBox
@@ -278,36 +278,6 @@ class ARMode extends Component {
 					</ViroARPlaneSelector>
 				) : (
 					""
-				)}
-				{this.state.water ? (
-					<ViroButton
-						source={require("./res/btn_white.png")}
-						// position={[-0.25, 0, -1]}
-						height={0.1}
-						width={0.1}
-					/>
-				) : (
-					<ViroText />
-				)}
-				{/* {this.state.seeds ? (
-					<ViroButton
-						source={require("./res/btn_white.png")}
-						position={this.state.seeds}
-						height={0.1}
-						width={0.1}
-					/>
-				) : (
-					<ViroText />
-				)} */}
-				{this.state.pick ? (
-					<ViroButton
-						source={require("./res/btn_white.png")}
-						// position={[-0.25, 0, -1]}
-						height={0.1}
-						width={0.1}
-					/>
-				) : (
-					<ViroText />
 				)}
 			</ViroARScene>
 		)
