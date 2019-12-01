@@ -1,7 +1,8 @@
 "use strict"
 
 import React, { Component } from "react"
-import { StyleSheet } from "react-native"
+import { connect } from "react-redux"
+import { StyleSheet, Vibration } from "react-native"
 
 import {
 	ViroARScene,
@@ -12,10 +13,13 @@ import {
 	ViroARPlane,
 	ViroARPlaneSelector,
 	ViroAmbientLight,
-	ViroBox
+	ViroBox,
+	ViroButton,
+	ViroParticleEmitter
 } from "react-viro"
 
 import { PLOT_WIDTH, PLOT_LENGTH, PLOT_HEIGHT } from "./constants"
+import { getAllPlots, makeNewPlot } from "../store/redux/plots"
 
 //const InitialARScene = require("./ARStart")
 //const defaultSceneType = 'AR_START'
@@ -79,48 +83,29 @@ const samplePlot3 = {
 }
 
 class ARMode extends Component {
-	constructor() {
-		super()
-
-		// Set initial state here
+	constructor(props) {
+		super(props)
 		this.state = {
 			text: "Initializing AR...",
-			selfLat: 0,
-			selfLong: 0,
 			loaded: false,
 			error: null,
 			plots: [],
-			anchorsFound: []
+			anchorsFound: [],
+			water: false,
+			seeds: false,
+			pick: false,
+			animateSeeds: false
 		}
-		// bind 'this' to functions
 		this._onInitialized = this._onInitialized.bind(this)
 		this._getARCoords = this._getARCoords.bind(this)
 		this._onSelected = this._onSelected.bind(this)
 		this._onAnchorFound = this._onAnchorFound.bind(this)
+		this._onHover = this._onHover.bind(this)
+		this._onClick = this._onClick.bind(this)
 	}
 
 	async componentDidMount() {
-		console.log("BEFORE", this.state.selfLat)
-		await navigator.geolocation.getCurrentPosition(
-			position => {
-				this.setState({
-					selfLat: position.coords.latitude,
-					selfLong: position.coords.longitude
-				})
-				FirebaseWrapper.GetInstance().getNearbyPlots(
-					"PeetPlotz",
-					position.coords.latitude,
-					position.coords.longitude,
-					2,
-					50,
-					plots => this.setState({ plots })
-				)
-			},
-			error => this.setState({ error: error.message }),
-			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-		)
-		console.log("AFTER", this.state.selfLat)
-
+		await this.props.getAllPlots(this.props.coords.lat, this.props.coords.lng)
 		this.setState({ loaded: true })
 	}
 
@@ -131,15 +116,14 @@ class ARMode extends Component {
 		var sm_a = 6378137.0
 		var xmeters = sm_a * lon_rad
 		var ymeters = sm_a * Math.log((Math.sin(lat_rad) + 1) / Math.cos(lat_rad))
-		// 10 ** (y_meters / sm_a) * Math.cos(lat_rad) = (Math.sin(lat_rad) + 1)
 		return { x: xmeters, y: ymeters }
 	}
 
 	_mercToLatLong(relative_x, relative_z) {
-		const lat = relative_z / 111111.1 + this.state.selfLat
+		const lat = relative_z / 111111.1 + this.props.coords.lat
 		const lng =
-			relative_x / (111111.1 * Math.cos(this.state.selfLat)) +
-			this.state.selfLong
+			relative_x / (111111.1 * Math.cos(this.props.coords.lat)) +
+			this.props.coords.lng
 		return { lat, lng }
 	}
 
@@ -149,26 +133,42 @@ class ARMode extends Component {
 			plot.coordinates.longitude
 		)
 		const selfMerc = this._latLongToMerc(
-			this.state.selfLat,
-			this.state.selfLong
+			this.props.coords.lat,
+			this.props.coords.lng
 		)
 		const plotARZ = plotMerc.y - selfMerc.y
 		const plotARX = plotMerc.x - selfMerc.x
 		return [plotARX, y, -plotARZ]
 	}
 
+	_onHover(anchor) {
+		const plot = this._plotHere(anchor)
+		const that = this
+		// console.log(this.state.seeds)
+		return function(isHovering, position, source) {
+			if (isHovering) {
+				that.setState({
+					water: plot.datePlanted && !plot.watered ? plot : null,
+					seeds: !plot.datePlanted ? plot : null,
+					pick: plot.ripe ? plot : null
+				})
+			} else {
+				that.setState({
+					water: null,
+					seeds: null,
+					pick: null
+				})
+			}
+		}
+	}
+
 	async _onSelected(anchor) {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
-		await FirebaseWrapper.GetInstance().createPlot(
-			"PeetPlotz",
-			"NEWPLOT",
-			lat,
-			lng
-		)
+		await this.props.makeNewPlot(lat, lng)
 	}
 
 	_plotHere(anchor) {
-		const { plots } = this.state
+		const { plots } = this.props
 		for (let i = 0; i < plots.length; i++) {
 			const [x, y, z] = this._getARCoords(plots[i])
 			if (
@@ -182,11 +182,39 @@ class ARMode extends Component {
 
 	_onAnchorFound(anchor) {
 		if (this._plotHere(anchor)) {
-			console.log("ANCHOR WITH PLOT FOUND!")
 			const newAnchors = [...this.state.anchorsFound]
 			newAnchors.push(anchor)
 			this.setState({ anchorsFound: newAnchors })
-		} else console.log("plotless anchor.")
+		}
+	}
+
+	_getPlotButton(plot) {
+		console.log("in the plot button function")
+		if (this.state.water === plot) return ["waterButton"]
+		else if (this.state.seeds === plot) return ["seedButton"]
+		return ["frontMaterial"]
+	}
+
+	_onClick(plot) {
+		console.log(
+			"I regret to inform you that the outer onClick is being invoked."
+		)
+		// return function(position, source) {
+		// 	console.log(
+		// 		"I regret to inform you that the inner onClick is being invoked."
+		// 	)
+		if (this.state.seeds === plot) {
+			//make the plot seeded in the DB, reduce # of seeds in inventory
+			Vibration.vibrate()
+			Vibration.cancel()
+			this.setState({ animateSeeds: true })
+			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
+		} else if (this.state.water === plot) {
+			//make the plot watered in the DB
+		} else if (this.state.pick === plot) {
+			//make the plot unplanted in the DB, add crop to basket
+			//}
+		}
 	}
 
 	render() {
@@ -197,16 +225,32 @@ class ARMode extends Component {
 				anchorDetectionTypes="PlanesHorizontal"
 				onAnchorFound={this._onAnchorFound}
 			>
-				{this.state.plots.map(plot => (
-					<ViroBox
-						height={0.05}
-						width={0.05}
-						length={0.05}
-						position={this._getARCoords(plot, 0)}
-					/>
-				))}
+				<ViroParticleEmitter
+					position={[0, 0, -1]}
+					duration={2000}
+					run={this.state.animateSeeds}
+					image={{
+						source: require("./res/particle_firework.png"),
+						height: 0.1,
+						width: 0.1
+					}}
+				/>
+				{this.props.plots.map(plot => {
+					console.log("rendering:", plot)
+					return (
+						<ViroBox
+							onClick={(position, source) => this._onClick(plot)}
+							height={0.05}
+							width={0.05}
+							length={0.05}
+							position={this._getARCoords(plot, 0)}
+							materials={this._getPlotButton(plot)}
+						/>
+					)
+				})}
 				{this.state.anchorsFound.map(anchor => (
 					<ViroBox
+						onHover={this._onHover(anchor)}
 						height={PLOT_HEIGHT}
 						width={PLOT_WIDTH}
 						length={PLOT_LENGTH}
@@ -224,6 +268,7 @@ class ARMode extends Component {
 						onPlaneSelected={this._onSelected}
 					>
 						<ViroBox
+							// onHover={this._onHover(anchor)}
 							height={0.0001}
 							width={0.8}
 							length={0.8}
@@ -252,9 +297,9 @@ class ARMode extends Component {
 		return <ViroARSceneNavigator initialScene={{ scene: newScene }} />
 	}
 
-	_onClick(sceneType, position, source) {
-		this.setState({ sceneType: sceneType })
-	}
+	// _onClick(sceneType, position, source) {
+	// 	this.setState({ sceneType: sceneType })
+	// }
 }
 
 var styles = StyleSheet.create({
@@ -271,6 +316,12 @@ ViroMaterials.createMaterials({
 	dirt: {
 		diffuseTexture: require("./res/plot_base.png")
 	},
+	waterButton: {
+		diffuseColor: "#03c6fc"
+	},
+	seedButton: {
+		diffuseColor: "#807955"
+	},
 	frontMaterial: {
 		diffuseColor: "#FFFFFF"
 	},
@@ -282,4 +333,10 @@ ViroMaterials.createMaterials({
 	}
 })
 
-module.exports = ARMode
+module.exports = connect(
+	state => ({ plots: state.plots, coords: state.coords }),
+	dispatch => ({
+		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
+		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng))
+	})
+)(ARMode)
