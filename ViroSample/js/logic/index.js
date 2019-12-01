@@ -10,12 +10,15 @@ export function midnightsBetween(date1, date2) {
 }
 
 export function update(plot, now = new Date()) {
+	// console.log("planted?:", !!plot.datePlanted)
 	if (plot.datePlanted) {
 		const daysSincePlanted = (now - plot.datePlanted) / millisecondsPerDay
 		let daysSinceWatered
 		if (plot.wateredDate)
 			daysSinceWatered = (now - plot.wateredDate) / millisecondsPerDay
 		const daysWithoutWater = daysSinceWatered || daysSincePlanted
+		// console.log("days without water:", daysWithoutWater)
+		// console.log("sensitivity:", plot.crop.sensitivity)
 		if (daysWithoutWater > plot.crop.sensitivity) {
 			plot.alive = false
 		} else {
@@ -30,4 +33,5 @@ export function update(plot, now = new Date()) {
 			}
 		}
 	}
+	return plot
 }

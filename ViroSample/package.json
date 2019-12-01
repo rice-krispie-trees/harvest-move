@@ -5,13 +5,16 @@
 	"scripts": {
 		"prestart": "./node_modules/react-viro/bin/run_ngrok.sh",
 		"start": "node node_modules/react-native/local-cli/cli.js start",
-		"test": "chai"
+		"test": "NODE_ENV='test' mocha \"./logic/**/*.spec.js\" \"./server/**/*.spec.js\" \"./js/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
 	},
 	"dependencies": {
+		"@babel/polyfill": "^7.7.0",
+		"@babel/register": "^7.7.4",
 		"chai": "^4.2.0",
 		"firebase": "^7.4.0",
 		"geofirestore": "^3.3.1",
 		"mercator-projection": "0.0.2",
+		"mocha": "^6.2.2",
 		"proj4": "^2.6.0",
 		"react": "16.8.3",
 		"react-native": "0.59.9",
