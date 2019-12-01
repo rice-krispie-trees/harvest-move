@@ -42,6 +42,8 @@ export class FirebaseWrapper {
 		}
 	}
 
+	async assignNameToPlot(collectionPath, doc)
+
 	async createUser(collectionPath, doc) {
 		try {
 			const ref = this._firestore.collection(collectionPath).doc(doc.user.uid)
@@ -81,7 +83,7 @@ export class FirebaseWrapper {
 				wateredDate: null,
 				alive: false
 			})
-			await newDoc.get().then(doc => callback(doc.data()))
+			await newDoc.get().doc(`/${name}`).then(doc => callback(doc.data()))
 		} catch (error) {
 			console.log("create plot failed", error)
 		}
