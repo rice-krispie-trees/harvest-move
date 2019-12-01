@@ -26,12 +26,15 @@ export const pickedPlot = plot => ({ type: PICKED_PLOT, plot })
 export const getAllPlots = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().getNearbyPlots(
-			"PeetPlotz",
+			"MorningsidePlots",
 			lat,
 			lng,
 			2,
 			50,
-			plots => dispatch(gotAllPlots(plots))
+			plots => {
+				// plots.forEach((plot, i) => (plot.id = i))
+				dispatch(gotAllPlots(plots))
+			}
 		)
 	} catch (error) {
 		console.log("error getting all plots", error)
@@ -40,7 +43,7 @@ export const getAllPlots = (lat, lng) => async dispatch => {
 export const makeNewPlot = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().createPlot(
-			"PeetPlotz",
+			"MorningsidePlots",
 			"NEWPLOT",
 			lat,
 			lng,

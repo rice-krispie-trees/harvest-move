@@ -81,10 +81,8 @@ export class FirebaseWrapper {
 				wateredDate: null,
 				alive: false
 			})
-			await newDoc
-				.get()
-				.set({ ...newDoc, id: newDoc.id })
-				.then(doc => callback(doc.data()))
+			await newDoc.update({ id: newDoc.id })
+			await newDoc.get().then(doc => callback(doc.data()))
 		} catch (error) {
 			console.log("create plot failed", error)
 		}
