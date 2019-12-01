@@ -6,81 +6,76 @@ import { StyleSheet, Vibration } from "react-native"
 
 import {
 	ViroARScene,
-	ViroText,
 	ViroConstants,
 	ViroMaterials,
 	ViroARSceneNavigator,
-	ViroARPlane,
 	ViroARPlaneSelector,
 	ViroAmbientLight,
 	ViroBox,
-	ViroButton,
 	ViroParticleEmitter
 } from "react-viro"
 
 import { PLOT_WIDTH, PLOT_LENGTH, PLOT_HEIGHT } from "./constants"
-import { getAllPlots, makeNewPlot } from "../store/redux/plots"
+import {
+	getAllPlots,
+	makeNewPlot,
+	waterPlot,
+	seedPlot,
+	pickPlot
+} from "../store/redux/plots"
 
-//const InitialARScene = require("./ARStart")
-//const defaultSceneType = 'AR_START'
-import { firebaseConfig } from "../firebase/config"
-import { FirebaseWrapper } from "../firebase/firebase"
+// class Plot {
+// 	constructor(lat, lng) {
+// 		this.lat = lat
+// 		this.long = lng
+// 		this.visible = false
+// 	}
+// }
+// const plots = []
+// for (let i = 40.704546; i < 40.705547; i += 0.00005) {
+// 	for (let j = -74.009598; j < -74.008598; j += 0.00005) {
+// 		plots.push(new Plot(i, j))
+// 	}
+// }
 
-const peetsLat = 40.704757
-const peetsLong = -73.009288
+// const samplePlot = {
+// 	crop: "corn",
+// 	date: new Date(),
+// 	ripe: false,
+// 	sprouted: false,
+// 	lat: 40.704787,
+// 	long: -73.009143,
+// 	waterC: 0,
+// 	watered: null,
+// 	alive: true,
+// 	visible: false
+// }
 
-class Plot {
-	constructor(lat, lng) {
-		this.lat = lat
-		this.long = lng
-		this.visible = false
-	}
-}
-const plots = []
-for (let i = 40.704546; i < 40.705547; i += 0.00005) {
-	for (let j = -74.009598; j < -74.008598; j += 0.00005) {
-		plots.push(new Plot(i, j))
-	}
-}
+// const samplePlot2 = {
+// 	crop: "cabbage",
+// 	date: new Date(),
+// 	ripe: false,
+// 	sprouted: false,
+// 	lat: 40.704797,
+// 	long: -73.009143,
+// 	waterC: 0,
+// 	watered: null,
+// 	alive: true,
+// 	visible: false
+// }
 
-const samplePlot = {
-	crop: "corn",
-	date: new Date(),
-	ripe: false,
-	sprouted: false,
-	lat: 40.704787,
-	long: -73.009143,
-	waterC: 0,
-	watered: null,
-	alive: true,
-	visible: false
-}
-
-const samplePlot2 = {
-	crop: "cabbage",
-	date: new Date(),
-	ripe: false,
-	sprouted: false,
-	lat: 40.704797,
-	long: -73.009143,
-	waterC: 0,
-	watered: null,
-	alive: true,
-	visible: false
-}
-
-const samplePlot3 = {
-	crop: "potato",
-	date: new Date(),
-	ripe: false,
-	sprouted: false,
-	lat: 40.704807,
-	long: -73.009163,
-	waterC: 0,
-	watered: null,
-	alive: true,
-	visible: false
-}
+// const samplePlot3 = {
+// 	crop: "potato",
+// 	date: new Date(),
+// 	ripe: false,
+// 	sprouted: false,
+// 	lat: 40.704807,
+// 	long: -73.009163,
+// 	waterC: 0,
+// 	watered: null,
+// 	alive: true,
+// 	visible: false
+// }
 
 class ARMode extends Component {
 	constructor(props) {
@@ -196,24 +191,16 @@ class ARMode extends Component {
 	}
 
 	_onClick(plot) {
-		console.log(
-			"I regret to inform you that the outer onClick is being invoked."
-		)
-		// return function(position, source) {
-		// 	console.log(
-		// 		"I regret to inform you that the inner onClick is being invoked."
-		// 	)
 		if (this.state.seeds === plot) {
-			//make the plot seeded in the DB, reduce # of seeds in inventory
+			this.props.seedPlot(plot)
 			Vibration.vibrate()
 			Vibration.cancel()
 			this.setState({ animateSeeds: true })
 			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
 		} else if (this.state.water === plot) {
-			//make the plot watered in the DB
+			this.props.waterPlot(plot)
 		} else if (this.state.pick === plot) {
-			//make the plot unplanted in the DB, add crop to basket
-			//}
+			this.props.pickPlot(plot)
 		}
 	}
 
@@ -337,6 +324,9 @@ module.exports = connect(
 	state => ({ plots: state.plots, coords: state.coords }),
 	dispatch => ({
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
-		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng))
+		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng)),
+		waterPlot: plot => dispatch(waterPlot(plot)),
+		seedPlot: plot => dispatch(seedPlot(plot)),
+		pickPlot: plot => dispatch(pickPlot(plot))
 	})
 )(ARMode)
