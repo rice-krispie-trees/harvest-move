@@ -24,59 +24,6 @@ import {
 	pickPlot
 } from "../store/redux/plots"
 
-// class Plot {
-// 	constructor(lat, lng) {
-// 		this.lat = lat
-// 		this.long = lng
-// 		this.visible = false
-// 	}
-// }
-// const plots = []
-// for (let i = 40.704546; i < 40.705547; i += 0.00005) {
-// 	for (let j = -74.009598; j < -74.008598; j += 0.00005) {
-// 		plots.push(new Plot(i, j))
-// 	}
-// }
-
-// const samplePlot = {
-// 	crop: "corn",
-// 	date: new Date(),
-// 	ripe: false,
-// 	sprouted: false,
-// 	lat: 40.704787,
-// 	long: -73.009143,
-// 	waterC: 0,
-// 	watered: null,
-// 	alive: true,
-// 	visible: false
-// }
-
-// const samplePlot2 = {
-// 	crop: "cabbage",
-// 	date: new Date(),
-// 	ripe: false,
-// 	sprouted: false,
-// 	lat: 40.704797,
-// 	long: -73.009143,
-// 	waterC: 0,
-// 	watered: null,
-// 	alive: true,
-// 	visible: false
-// }
-
-// const samplePlot3 = {
-// 	crop: "potato",
-// 	date: new Date(),
-// 	ripe: false,
-// 	sprouted: false,
-// 	lat: 40.704807,
-// 	long: -73.009163,
-// 	waterC: 0,
-// 	watered: null,
-// 	alive: true,
-// 	visible: false
-// }
-
 class ARMode extends Component {
 	constructor(props) {
 		super(props)
@@ -140,7 +87,7 @@ class ARMode extends Component {
 		const plot = this._plotHere(anchor)
 		const that = this
 		// console.log(this.state.seeds)
-		return function(isHovering, position, source) {
+		return function(isHovering) {
 			if (isHovering) {
 				that.setState({
 					water: plot.datePlanted && !plot.watered ? plot : null,
@@ -184,9 +131,9 @@ class ARMode extends Component {
 	}
 
 	_getPlotButton(plot) {
-		console.log("in the plot button function")
 		if (this.state.water === plot) return ["waterButton"]
 		else if (this.state.seeds === plot) return ["seedButton"]
+		else if (this.state.pick === plot) return ["pickButton"]
 		return ["frontMaterial"]
 	}
 
@@ -279,25 +226,7 @@ class ARMode extends Component {
 			console.error(reason)
 		}
 	}
-
-	_switchARScene(newScene) {
-		return <ViroARSceneNavigator initialScene={{ scene: newScene }} />
-	}
-
-	// _onClick(sceneType, position, source) {
-	// 	this.setState({ sceneType: sceneType })
-	// }
 }
-
-var styles = StyleSheet.create({
-	helloWorldTextStyle: {
-		fontFamily: "Arial",
-		fontSize: 15,
-		color: "#ffffff",
-		textAlignVertical: "center",
-		textAlign: "center"
-	}
-})
 
 ViroMaterials.createMaterials({
 	dirt: {
@@ -308,6 +237,9 @@ ViroMaterials.createMaterials({
 	},
 	seedButton: {
 		diffuseColor: "#807955"
+	},
+	pickButton: {
+		diffuseColor: "#b8c5d9"
 	},
 	frontMaterial: {
 		diffuseColor: "#FFFFFF"
