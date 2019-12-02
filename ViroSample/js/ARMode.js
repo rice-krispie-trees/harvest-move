@@ -195,6 +195,9 @@ class ARMode extends Component {
 				})}
 				{this.state.anchorsFound.map(anchor => (
 					<ViroBox
+						onClick={(position, source) =>
+							this._onClick(this._plotHere(anchor))
+						}
 						onHover={this._onHover(anchor)}
 						height={PLOT_HEIGHT}
 						width={PLOT_WIDTH}
@@ -208,9 +211,6 @@ class ARMode extends Component {
 				))}
 				{this.state.anchorsFound.map(anchor => (
 					<ViroSphere
-						onClick={(position, source) =>
-							this._onClick(this._plotHere(anchor))
-						}
 						radius={MARKER_RADIUS}
 						position={this._getARCoords(
 							this._plotHere(anchor),

@@ -1,6 +1,7 @@
+import crops from "./crops"
+
 const millisecondsPerHour = 1000 * 60 * 60
 const millisecondsPerDay = millisecondsPerHour * 24
-
 const WATER_SLACK = 0.9
 
 export function midnightsBetween(date1, date2) {
@@ -10,6 +11,7 @@ export function midnightsBetween(date1, date2) {
 }
 
 export function update(plot, now = new Date()) {
+	const crop = crops[plot.crop]
 	// console.log("planted?:", !!plot.datePlanted)
 	if (plot.datePlanted) {
 		const daysSincePlanted = (now - plot.datePlanted) / millisecondsPerDay
@@ -19,16 +21,16 @@ export function update(plot, now = new Date()) {
 		const daysWithoutWater = daysSinceWatered || daysSincePlanted
 		// console.log("days without water:", daysWithoutWater)
 		// console.log("sensitivity:", plot.crop.sensitivity)
-		if (daysWithoutWater > plot.crop.sensitivity) {
+		if (daysWithoutWater > crop.sensitivity) {
 			plot.alive = false
 		} else {
-			if (daysWithoutWater * plot.crop.waterCountPerDay > WATER_SLACK)
+			if (daysWithoutWater * crop.waterCountPerDay > WATER_SLACK)
 				plot.watered = false
 			if (plot.sprouted && !plot.ripe) {
-				const watersToRipen = plot.crop.waterCountPerDay * plot.crop.harvestTime
+				const watersToRipen = crop.waterCountPerDay * crop.harvestTime
 				if (plot.waterCount >= watersToRipen) plot.ripe = true
 			} else if (!plot.sprouted) {
-				const watersToSprout = plot.crop.waterCountPerDay * plot.crop.sproutTime
+				const watersToSprout = crop.waterCountPerDay * crop.sproutTime
 				if (plot.waterCount >= watersToSprout) plot.sprouted = true
 			}
 		}

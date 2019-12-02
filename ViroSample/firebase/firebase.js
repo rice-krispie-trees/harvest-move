@@ -1,5 +1,6 @@
 import * as firebase from "firebase"
 import "firebase/firestore"
+import firebasePath from "../firebase_path"
 import {
 	GeoCollectionReference,
 	GeoFirestore,
@@ -128,7 +129,7 @@ export class FirebaseWrapper {
 
 	async seedPlot(plotId, callback) {
 		try {
-			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			const ref = this._firestore.collection(firebasePath).doc(plotId)
 			await ref.update({
 				"d.datePlanted": new Date(),
 				"d.alive": true
@@ -141,7 +142,7 @@ export class FirebaseWrapper {
 
 	async waterPlot(plotId, callback) {
 		try {
-			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			const ref = this._firestore.collection(firebasePath).doc(plotId)
 			await ref.update({
 				"d.waterCount": firebase.firestore.FieldValue.increment(1),
 				"d.wateredDate": new Date(),
@@ -155,7 +156,7 @@ export class FirebaseWrapper {
 
 	async pickCrop(plotId, callback) {
 		try {
-			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			const ref = this._firestore.collection(firebasePath).doc(plotId)
 			await ref.update({
 				"d.datePlanted": null,
 				"d.ripe": false,

@@ -1,4 +1,5 @@
 import { FirebaseWrapper } from "../../firebase/firebase"
+import firebasePath from "../../firebase_path"
 
 export const GOT_ALL_PLOTS = "GOT_ALL_PLOTS"
 export const MADE_NEW_PLOT = "MADE_NEW_PLOT"
@@ -26,7 +27,7 @@ export const pickedPlot = (plot, crop) => ({ type: PICKED_PLOT, plot, crop })
 export const getAllPlots = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().getNearbyPlots(
-			"MorningsidePlots",
+			firebasePath,
 			lat,
 			lng,
 			2,
@@ -40,7 +41,7 @@ export const getAllPlots = (lat, lng) => async dispatch => {
 export const makeNewPlot = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().createPlot(
-			"MorningsidePlots",
+			firebasePath,
 			lat,
 			lng,
 			plot => dispatch(madeNewPlot(plot))
