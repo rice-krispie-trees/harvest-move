@@ -1,4 +1,5 @@
 import { FirebaseWrapper } from "../../firebase/firebase"
+import firebasePath from "../../firebase_path"
 
 export const GOT_ALL_PLOTS = "GOT_ALL_PLOTS"
 export const MADE_NEW_PLOT = "MADE_NEW_PLOT"
@@ -26,7 +27,7 @@ export const pickedPlot = (plot, crop) => ({ type: PICKED_PLOT, plot, crop })
 export const getAllPlots = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().getNearbyPlots(
-			"MorningsidePlots",
+			firebasePath,
 			lat,
 			lng,
 			2,
@@ -40,7 +41,7 @@ export const getAllPlots = (lat, lng) => async dispatch => {
 export const makeNewPlot = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().createPlot(
-			"MorningsidePlots",
+			firebasePath,
 			lat,
 			lng,
 			plot => dispatch(madeNewPlot(plot))
@@ -60,9 +61,9 @@ export const waterPlot = plot => async dispatch => {
 	}
 }
 
-export const seedPlot = plot => async dispatch => {
+export const seedPlot = (plot, seed) => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().seedPlot(plot.id, updatedPlot =>
+		await FirebaseWrapper.GetInstance().seedPlot(plot.id, seed, updatedPlot =>
 			dispatch(seededPlot(updatedPlot))
 		)
 	} catch (error) {
@@ -72,8 +73,10 @@ export const seedPlot = plot => async dispatch => {
 
 export const pickPlot = plot => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().pickCrop(plot.id, updatedPlot =>
-			dispatch(pickedPlot(updatedPlot, plot.crop))
+		await FirebaseWrapper.GetInstance().pickCrop(
+			plot.id,
+			plot.crop,
+			updatedPlot => dispatch(pickedPlot(updatedPlot, plot.crop))
 		)
 	} catch (error) {
 		console.log("error picking plot", error)
