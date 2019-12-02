@@ -41,7 +41,8 @@ class ARMode extends Component {
 			water: false,
 			seeds: false,
 			pick: false,
-			animateSeeds: false
+			animateSeeds: false,
+			clickable: true
 		}
 		this._onInitialized = this._onInitialized.bind(this)
 		this._getARCoords = this._getARCoords.bind(this)
@@ -95,7 +96,7 @@ class ARMode extends Component {
 			if (isHovering) {
 				console.log("hovering on:", plot)
 				that.setState({
-					water: plot.datePlanted && !plot.watered ? plot : null,
+					water: plot.datePlanted && !plot.ripe && !plot.watered ? plot : null,
 					seeds: !plot.datePlanted ? plot : null,
 					pick: plot.ripe ? plot : null
 				})
@@ -143,20 +144,29 @@ class ARMode extends Component {
 	}
 
 	_onClick(plot) {
-		if (this.state.seeds === plot) {
-			this.props.seedPlot(plot, this.props.seed)
-			Vibration.vibrate()
-			Vibration.cancel()
-			this.setState({ animateSeeds: true })
-			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
-		} else if (this.state.water === plot) {
-			this.props.waterPlot(plot)
-			Vibration.vibrate()
-			Vibration.cancel()
-		} else if (this.state.pick === plot) {
-			this.props.pickPlot(plot)
-			Vibration.vibrate()
-			Vibration.cancel()
+		if (
+			this.state.clickable &&
+			[this.state.seeds, this.state.water, this.state.pick].includes(plot)
+		) {
+			if (this.state.seeds === plot) {
+				this.props.seedPlot(plot, this.props.seed)
+				Vibration.vibrate()
+				Vibration.cancel()
+				this.setState({ animateSeeds: true })
+				// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
+			} else if (this.state.water === plot) {
+				this.props.waterPlot(plot)
+				Vibration.vibrate()
+				Vibration.cancel()
+			} else if (this.state.pick === plot) {
+				this.props.pickPlot(plot)
+				Vibration.vibrate()
+				Vibration.cancel()
+			}
+			this.setState({ clickable: false })
+			setTimeout(() => {
+				this.setState({ clickable: true })
+			}, 3000)
 		}
 	}
 
@@ -167,6 +177,7 @@ class ARMode extends Component {
 				onTrackingUpdated={this._onInitialized}
 				anchorDetectionTypes="PlanesHorizontal"
 				onAnchorFound={this._onAnchorFound}
+				style={{ flex: 1 }}
 			>
 				<ViroParticleEmitter
 					position={
@@ -283,7 +294,7 @@ module.exports = connect(
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
 		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng)),
 		waterPlot: plot => dispatch(waterPlot(plot)),
-		seedPlot: plot => dispatch(seedPlot(plot)),
+		seedPlot: (plot, seed) => dispatch(seedPlot(plot, seed)),
 		pickPlot: plot => dispatch(pickPlot(plot))
 	})
 )(ARMode)

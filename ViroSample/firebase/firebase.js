@@ -80,6 +80,7 @@ export class FirebaseWrapper {
 			)
 			const newDoc = await geocollection.add({
 				coordinates,
+				crop: null,
 				datePlanted: null,
 				ripe: false,
 				sprouted: false,
@@ -133,7 +134,8 @@ export class FirebaseWrapper {
 			const plotRef = this._firestore.collection(firebasePath).doc(plotId)
 			await batch.update(plotRef, {
 				"d.datePlanted": new Date(),
-				"d.alive": true
+				"d.alive": true,
+				"d.crop": seed
 			})
 			const seedRef = this._firestore.collection("SeedBasket").doc(seed)
 			await batch.update(seedRef, {
@@ -161,18 +163,26 @@ export class FirebaseWrapper {
 		}
 	}
 
-	async pickCrop(plotId, callback) {
+	async pickCrop(plotId, crop, callback) {
 		try {
-			const ref = this._firestore.collection(firebasePath).doc(plotId)
-			await ref.update({
+			const batch = this._firestore.batch()
+			const plotRef = this._firestore.collection(firebasePath).doc(plotId)
+			await batch.update(plotRef, {
 				"d.datePlanted": null,
 				"d.ripe": false,
 				"d.sprouted": false,
 				"d.waterCount": 0,
 				"d.wateredDate": null,
-				"d.alive": false
+				"d.alive": false,
+				"d.seed": null
 			})
-			await ref.get().then(doc => callback(doc.data().d))
+			const cropRef = this._firestore.collection("CropBasket").doc(crop)
+			await batch.update(cropRef, {
+				count: firebase.firestore.FieldValue.increment(1)
+			})
+			await batch.commit().then(async () => {
+				await plotRef.get().then(doc => callback(doc.data().d))
+			})
 		} catch (error) {
 			console.log("pickCrop failed", error)
 		}

@@ -73,8 +73,10 @@ export const seedPlot = (plot, seed) => async dispatch => {
 
 export const pickPlot = plot => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().pickCrop(plot.id, updatedPlot =>
-			dispatch(pickedPlot(updatedPlot, plot.crop))
+		await FirebaseWrapper.GetInstance().pickCrop(
+			plot.id,
+			plot.crop,
+			updatedPlot => dispatch(pickedPlot(updatedPlot, plot.crop))
 		)
 	} catch (error) {
 		console.log("error picking plot", error)
