@@ -10,7 +10,7 @@ export const gotAllPlots = plots => ({ type: GOT_ALL_PLOTS, plots })
 export const madeNewPlot = plot => ({ type: MADE_NEW_PLOT, plot })
 export const wateredPlot = plot => ({ type: WATERED_PLOT, plot })
 export const seededPlot = plot => ({ type: SEEDED_PLOT, plot })
-export const pickedPlot = plot => ({ type: PICKED_PLOT, plot })
+export const pickedPlot = (plot, crop) => ({ type: PICKED_PLOT, plot, crop })
 
 // export const getAllPlots = () => async dispatch => {
 // 	try {
@@ -31,10 +31,7 @@ export const getAllPlots = (lat, lng) => async dispatch => {
 			lng,
 			2,
 			50,
-			plots => {
-				// plots.forEach((plot, i) => (plot.id = i))
-				dispatch(gotAllPlots(plots))
-			}
+			plots => dispatch(gotAllPlots(plots))
 		)
 	} catch (error) {
 		console.log("error getting all plots", error)
@@ -44,7 +41,6 @@ export const makeNewPlot = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().createPlot(
 			"MorningsidePlots",
-			"NEWPLOT",
 			lat,
 			lng,
 			plot => dispatch(madeNewPlot(plot))
@@ -56,8 +52,9 @@ export const makeNewPlot = (lat, lng) => async dispatch => {
 
 export const waterPlot = plot => async dispatch => {
 	try {
-		//call to firebase here; update the plot on FB and return the updatedPlot
-		//include this callback: plot => dispatch(wateredPlot(plot))
+		await FirebaseWrapper.GetInstance().waterPlot(plot.id, updatedPlot =>
+			dispatch(wateredPlot(updatedPlot))
+		)
 	} catch (error) {
 		console.log("error watering plot", error)
 	}
@@ -65,8 +62,9 @@ export const waterPlot = plot => async dispatch => {
 
 export const seedPlot = plot => async dispatch => {
 	try {
-		//call to firebase here; update the plot on FB and return the updatedPlot
-		//include this callback: plot => dispatch(seededPlot(plot))
+		await FirebaseWrapper.GetInstance().seedPlot(plot.id, updatedPlot =>
+			dispatch(seededPlot(updatedPlot))
+		)
 	} catch (error) {
 		console.log("error seeding plot", error)
 	}
@@ -74,8 +72,9 @@ export const seedPlot = plot => async dispatch => {
 
 export const pickPlot = plot => async dispatch => {
 	try {
-		//call to firebase here; update the plot on FB and return the updatedPlot
-		//include this callback: plot => dispatch(pickedPlot(plot))
+		await FirebaseWrapper.GetInstance().pickCrop(plot.id, updatedPlot =>
+			dispatch(pickedPlot(updatedPlot, plot.crop))
+		)
 	} catch (error) {
 		console.log("error picking plot", error)
 	}
@@ -83,13 +82,13 @@ export const pickPlot = plot => async dispatch => {
 
 function replacePlot(state, action) {
 	const newState = [...state]
-	newState[state.indexOf(action.plot)] = action.plot
+	const oldPlot = state.find(plot => plot.id === action.plot.id)
+	newState[state.indexOf(oldPlot)] = action.plot
 	return newState
 }
 
 const initialState = []
 export default function(state = initialState, action) {
-	let newState
 	switch (action.type) {
 		case GOT_ALL_PLOTS:
 			return action.plots

@@ -2,13 +2,12 @@
 
 import React, { Component } from "react"
 import { connect } from "react-redux"
-import { StyleSheet, Vibration } from "react-native"
+import { Vibration } from "react-native"
 
 import {
 	ViroARScene,
 	ViroConstants,
 	ViroMaterials,
-	ViroARSceneNavigator,
 	ViroARPlaneSelector,
 	ViroAmbientLight,
 	ViroBox,
@@ -92,7 +91,6 @@ class ARMode extends Component {
 	_onHover(anchor) {
 		const plot = this._plotHere(anchor)
 		const that = this
-		// console.log(this.state.seeds)
 		return function(isHovering) {
 			if (isHovering) {
 				that.setState({
@@ -118,7 +116,7 @@ class ARMode extends Component {
 	_plotHere(anchor) {
 		const { plots } = this.props
 		for (let i = 0; i < plots.length; i++) {
-			const [x, y, z] = this._getARCoords(plots[i])
+			const [x, _, z] = this._getARCoords(plots[i])
 			if (
 				Math.abs(x - anchor.position[0]) < PLOT_WIDTH &&
 				Math.abs(z - anchor.position[2]) < PLOT_LENGTH
@@ -152,14 +150,17 @@ class ARMode extends Component {
 			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
 		} else if (this.state.water === plot) {
 			this.props.waterPlot(plot)
+			Vibration.vibrate()
+			Vibration.cancel()
 		} else if (this.state.pick === plot) {
 			this.props.pickPlot(plot)
+			Vibration.vibrate()
+			Vibration.cancel()
 		}
 	}
 
 	render() {
 		let hoeSelected = true
-		console.log(this.state.seeds)
 		return (
 			<ViroARScene
 				onTrackingUpdated={this._onInitialized}
@@ -181,7 +182,6 @@ class ARMode extends Component {
 					}}
 				/>
 				{this.props.plots.map(plot => {
-					console.log("rendering:", plot)
 					return (
 						<ViroBox
 							// onClick={(position, source) => this._onClick(plot)}
@@ -220,7 +220,7 @@ class ARMode extends Component {
 					/>
 				))}
 				<ViroAmbientLight color="#FFFFFF" />
-				{/* {hoeSelected ? (
+				{hoeSelected ? (
 					<ViroARPlaneSelector
 						alignment="Horizontal"
 						onPlaneSelected={this._onSelected}
@@ -236,7 +236,7 @@ class ARMode extends Component {
 					</ViroARPlaneSelector>
 				) : (
 					""
-				)} */}
+				)}
 			</ViroARScene>
 		)
 	}

@@ -84,6 +84,7 @@ export class FirebaseWrapper {
 				sprouted: false,
 				waterCount: 0,
 				wateredDate: null,
+				watered: false,
 				alive: false
 			})
 			await newDoc.update({ id: newDoc.id })
@@ -125,39 +126,45 @@ export class FirebaseWrapper {
 		}
 	}
 
-	async seedPlot(plotId) {
+	async seedPlot(plotId, callback) {
 		try {
-			const ref = this._firestore.collection("Plots").doc(plotId)
-			return await ref.update({ d: { datePlanted: new Date(), alive: true } })
+			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			await ref.update({
+				"d.datePlanted": new Date(),
+				"d.alive": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
 		} catch (error) {
 			console.log("seedPlot failed", error)
 		}
 	}
 
-	async waterPlot(plotId) {
+	async waterPlot(plotId, callback) {
 		try {
-			const ref = this._firestore.collection("Plots").doc(plotId)
-			return await ref.update({
-				d: { waterCount: waterCount + 1, wateredDate: new Date() }
+			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			await ref.update({
+				"d.waterCount": firebase.firestore.FieldValue.increment(1),
+				"d.wateredDate": new Date(),
+				"d.watered": true
 			})
+			await ref.get().then(doc => callback(doc.data().d))
 		} catch (error) {
 			console.log("waterPlot failed", error)
 		}
 	}
 
-	async pickCrop(plotId) {
+	async pickCrop(plotId, callback) {
 		try {
-			const ref = this._firestore.collection("Plots").doc(plotId)
-			return await ref.update({
-				d: {
-					datePlanted: null,
-					ripe: false,
-					sprouted: false,
-					waterCount: 0,
-					wateredDate: null,
-					alive: false
-				}
+			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			await ref.update({
+				"d.datePlanted": null,
+				"d.ripe": false,
+				"d.sprouted": false,
+				"d.waterCount": 0,
+				"d.wateredDate": null,
+				"d.alive": false
 			})
+			await ref.get().then(doc => callback(doc.data().d))
 		} catch (error) {
 			console.log("pickCrop failed", error)
 		}
