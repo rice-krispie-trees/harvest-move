@@ -7,6 +7,17 @@ import {
 	GeoQuerySnapshot
 } from "geofirestore"
 
+// const getNewDocId = async collectionPath => {
+//   const docIdRef = await firebase
+//     .firestore()
+//     .collection("Counters")
+//     .doc(collectionPath);
+//   const newDocIdRef = await docIdRef.update({
+//     counter: firebase.firestore.FieldValue.increment(1)
+//   });
+//   return newDocIdRef;
+// };
+
 export class FirebaseWrapper {
 	constructor() {
 		this.initialized = false
@@ -57,14 +68,9 @@ export class FirebaseWrapper {
 		}
 	}
 
-	async createPlot(
-		collectionPath,
-		name,
-		plotLatitude,
-		plotLongitude,
-		callback
-	) {
+	async createPlot(collectionPath, plotLatitude, plotLongitude, callback) {
 		try {
+			//   const docId = getNewDocId(collectionPath);
 			const geofirestore = new GeoFirestore(this._firestore)
 			const geocollection = geofirestore.collection(collectionPath)
 			const coordinates = new firebase.firestore.GeoPoint(
@@ -72,7 +78,6 @@ export class FirebaseWrapper {
 				plotLongitude
 			)
 			const newDoc = await geocollection.add({
-				name,
 				coordinates,
 				datePlanted: null,
 				ripe: false,
@@ -117,6 +122,44 @@ export class FirebaseWrapper {
 			})
 		} catch (error) {
 			console.log("get nearby plots failed", error)
+		}
+	}
+
+	async seedPlot(plotId) {
+		try {
+			const ref = this._firestore.collection("Plots").doc(plotId)
+			return await ref.update({ d: { datePlanted: new Date(), alive: true } })
+		} catch (error) {
+			console.log("seedPlot failed", error)
+		}
+	}
+
+	async waterPlot(plotId) {
+		try {
+			const ref = this._firestore.collection("Plots").doc(plotId)
+			return await ref.update({
+				d: { waterCount: waterCount + 1, wateredDate: new Date() }
+			})
+		} catch (error) {
+			console.log("waterPlot failed", error)
+		}
+	}
+
+	async pickCrop(plotId) {
+		try {
+			const ref = this._firestore.collection("Plots").doc(plotId)
+			return await ref.update({
+				d: {
+					datePlanted: null,
+					ripe: false,
+					sprouted: false,
+					waterCount: 0,
+					wateredDate: null,
+					alive: false
+				}
+			})
+		} catch (error) {
+			console.log("pickCrop failed", error)
 		}
 	}
 
