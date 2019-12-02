@@ -12,10 +12,16 @@ import {
 	ViroARPlaneSelector,
 	ViroAmbientLight,
 	ViroBox,
-	ViroParticleEmitter
+	ViroParticleEmitter,
+	ViroSphere
 } from "react-viro"
 
-import { PLOT_WIDTH, PLOT_LENGTH, PLOT_HEIGHT } from "./constants"
+import {
+	PLOT_WIDTH,
+	PLOT_LENGTH,
+	PLOT_HEIGHT,
+	MARKER_RADIUS
+} from "./constants"
 import {
 	getAllPlots,
 	makeNewPlot,
@@ -153,6 +159,7 @@ class ARMode extends Component {
 
 	render() {
 		let hoeSelected = true
+		console.log(this.state.seeds)
 		return (
 			<ViroARScene
 				onTrackingUpdated={this._onInitialized}
@@ -160,7 +167,11 @@ class ARMode extends Component {
 				onAnchorFound={this._onAnchorFound}
 			>
 				<ViroParticleEmitter
-					position={[0, 0, -1]}
+					position={
+						this.state.seeds
+							? this._getARCoords(this.state.seeds, 0)
+							: [0, 0, -1]
+					}
 					duration={2000}
 					run={this.state.animateSeeds}
 					image={{
@@ -173,7 +184,7 @@ class ARMode extends Component {
 					console.log("rendering:", plot)
 					return (
 						<ViroBox
-							onClick={(position, source) => this._onClick(plot)}
+							// onClick={(position, source) => this._onClick(plot)}
 							height={0.05}
 							width={0.05}
 							length={0.05}
@@ -195,8 +206,21 @@ class ARMode extends Component {
 						)}
 					/>
 				))}
+				{this.state.anchorsFound.map(anchor => (
+					<ViroSphere
+						onClick={(position, source) =>
+							this._onClick(this._plotHere(anchor))
+						}
+						radius={MARKER_RADIUS}
+						position={this._getARCoords(
+							this._plotHere(anchor),
+							anchor.position[1] + MARKER_RADIUS
+						)}
+						materials={this._getPlotButton(this._plotHere(anchor))}
+					/>
+				))}
 				<ViroAmbientLight color="#FFFFFF" />
-				{hoeSelected ? (
+				{/* {hoeSelected ? (
 					<ViroARPlaneSelector
 						alignment="Horizontal"
 						onPlaneSelected={this._onSelected}
@@ -212,7 +236,7 @@ class ARMode extends Component {
 					</ViroARPlaneSelector>
 				) : (
 					""
-				)}
+				)} */}
 			</ViroARScene>
 		)
 	}
