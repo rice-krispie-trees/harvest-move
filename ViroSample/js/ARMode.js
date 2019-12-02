@@ -93,6 +93,7 @@ class ARMode extends Component {
 		const that = this
 		return function(isHovering) {
 			if (isHovering) {
+				console.log("hovering on:", plot)
 				that.setState({
 					water: plot.datePlanted && !plot.watered ? plot : null,
 					seeds: !plot.datePlanted ? plot : null,
@@ -143,7 +144,7 @@ class ARMode extends Component {
 
 	_onClick(plot) {
 		if (this.state.seeds === plot) {
-			this.props.seedPlot(plot)
+			this.props.seedPlot(plot, this.props.seed)
 			Vibration.vibrate()
 			Vibration.cancel()
 			this.setState({ animateSeeds: true })
@@ -277,7 +278,7 @@ ViroMaterials.createMaterials({
 })
 
 module.exports = connect(
-	state => ({ plots: state.plots, coords: state.coords }),
+	state => ({ plots: state.plots, coords: state.coords, seed: state.seed }),
 	dispatch => ({
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
 		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng)),

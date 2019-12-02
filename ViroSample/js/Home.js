@@ -18,7 +18,7 @@ export default connect(
 					<Text onPress={() => Actions.map()}>Behold, our home page.</Text>
 					<View>
 						<Text onPress={() => Actions.ar()}>
-							Click here to go to AR mode.
+							Click here to go to AR mode. (UPDATED)
 						</Text>
 					</View>
 				</View>

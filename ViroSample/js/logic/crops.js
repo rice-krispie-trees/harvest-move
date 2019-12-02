@@ -42,3 +42,11 @@ export const wheat = {
 	sensitivity: 5,
 	value: 1000
 }
+
+export default {
+	corn,
+	wheat,
+	strawberry,
+	cabbage,
+	potato
+}

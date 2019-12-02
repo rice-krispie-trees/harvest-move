@@ -61,9 +61,9 @@ export const waterPlot = plot => async dispatch => {
 	}
 }
 
-export const seedPlot = plot => async dispatch => {
+export const seedPlot = (plot, seed) => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().seedPlot(plot.id, updatedPlot =>
+		await FirebaseWrapper.GetInstance().seedPlot(plot.id, seed, updatedPlot =>
 			dispatch(seededPlot(updatedPlot))
 		)
 	} catch (error) {

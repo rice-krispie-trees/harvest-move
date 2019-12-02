@@ -127,14 +127,21 @@ export class FirebaseWrapper {
 		}
 	}
 
-	async seedPlot(plotId, callback) {
+	async seedPlot(plotId, seed, callback) {
 		try {
-			const ref = this._firestore.collection(firebasePath).doc(plotId)
-			await ref.update({
+			const batch = this._firestore.batch()
+			const plotRef = this._firestore.collection(firebasePath).doc(plotId)
+			await batch.update(plotRef, {
 				"d.datePlanted": new Date(),
 				"d.alive": true
 			})
-			await ref.get().then(doc => callback(doc.data().d))
+			const seedRef = this._firestore.collection("SeedBasket").doc(seed)
+			await batch.update(seedRef, {
+				count: firebase.firestore.FieldValue.increment(-1)
+			})
+			await batch.commit().then(async () => {
+				await plotRef.get().then(doc => callback(doc.data().d))
+			})
 		} catch (error) {
 			console.log("seedPlot failed", error)
 		}
