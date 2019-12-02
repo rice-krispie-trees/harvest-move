@@ -24,22 +24,24 @@ export default class CropMap extends Component {
       ],
       plots: []
     };
+    this.pinColor = this.pinColor.bind(this);
+    this.getDate = this.getDate.bind(this);
   }
 
   async componentDidMount() {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        this.setState({
-          location: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            error: null
-          }
-        });
-      },
-      error => this.setState({ location: { error: error.message } }),
-      { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
-    );
+    // navigator.geolocation.getCurrentPosition(
+    //   position => {
+    //     this.setState({
+    //       location: {
+    //         latitude: position.coords.latitude,
+    //         longitude: position.coords.longitude,
+    //         error: null
+    //       }
+    //     });
+    //   },
+    //   error => this.setState({ location: { error: error.message } }),
+    //   { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
+    // );
     // this.state.hardcoded.forEach(async loc => {
     //   await FirebaseWrapper.GetInstance().createPlot(
     //     "Plots",
@@ -57,9 +59,20 @@ export default class CropMap extends Component {
     // );
 
     await FirebaseWrapper.GetInstance().SetupCollectionListener(
-      "Plots",
+      "FullstackPlots",
       plots => this.setState({ plots })
     );
+  }
+
+  pinColor(plot) {
+    if (plot.d.waterCount > 0) return "#1ca3ec";
+    else if (plot.d.alive) return "#915118";
+    else return "red";
+  }
+
+  getDate(timestamp) {
+    if (!timestamp) return 'Not planted';
+    else return new Date(timestamp);
   }
 
   render() {
@@ -81,12 +94,18 @@ export default class CropMap extends Component {
         {this.state.plots.map(plot => {
           return (
             <Marker
-              key={plot.d.name}
+              key={plot.d.id}
+              pinColor={this.pinColor(plot)}
               coordinate={{
                 latitude: plot.d.coordinates.latitude,
                 longitude: plot.d.coordinates.longitude
               }}
-            />
+            >
+              {/* <Text style={{ fontWeight: 'bold' }}>{plot.d.name}</Text>
+              {!plot.d.alive &&
+                <Text>Nothing</Text>
+              } */}
+            </Marker>
           );
         })}
       </MapView>
