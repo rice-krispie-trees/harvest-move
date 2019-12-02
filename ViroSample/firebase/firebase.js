@@ -7,6 +7,17 @@ import {
 	GeoQuerySnapshot
 } from "geofirestore"
 
+// const getNewDocId = async collectionPath => {
+//   const docIdRef = await firebase
+//     .firestore()
+//     .collection("Counters")
+//     .doc(collectionPath);
+//   const newDocIdRef = await docIdRef.update({
+//     counter: firebase.firestore.FieldValue.increment(1)
+//   });
+//   return newDocIdRef;
+// };
+
 export class FirebaseWrapper {
 	constructor() {
 		this.initialized = false
@@ -57,14 +68,9 @@ export class FirebaseWrapper {
 		}
 	}
 
-	async createPlot(
-		collectionPath,
-		name,
-		plotLatitude,
-		plotLongitude,
-		callback
-	) {
+	async createPlot(collectionPath, plotLatitude, plotLongitude, callback) {
 		try {
+			//   const docId = getNewDocId(collectionPath);
 			const geofirestore = new GeoFirestore(this._firestore)
 			const geocollection = geofirestore.collection(collectionPath)
 			const coordinates = new firebase.firestore.GeoPoint(
@@ -72,15 +78,16 @@ export class FirebaseWrapper {
 				plotLongitude
 			)
 			const newDoc = await geocollection.add({
-				name,
 				coordinates,
 				datePlanted: null,
 				ripe: false,
 				sprouted: false,
 				waterCount: 0,
 				wateredDate: null,
+				watered: false,
 				alive: false
 			})
+			await newDoc.update({ id: newDoc.id })
 			await newDoc.get().then(doc => callback(doc.data()))
 		} catch (error) {
 			console.log("create plot failed", error)
@@ -116,6 +123,50 @@ export class FirebaseWrapper {
 			})
 		} catch (error) {
 			console.log("get nearby plots failed", error)
+		}
+	}
+
+	async seedPlot(plotId, callback) {
+		try {
+			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			await ref.update({
+				"d.datePlanted": new Date(),
+				"d.alive": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("seedPlot failed", error)
+		}
+	}
+
+	async waterPlot(plotId, callback) {
+		try {
+			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			await ref.update({
+				"d.waterCount": firebase.firestore.FieldValue.increment(1),
+				"d.wateredDate": new Date(),
+				"d.watered": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("waterPlot failed", error)
+		}
+	}
+
+	async pickCrop(plotId, callback) {
+		try {
+			const ref = this._firestore.collection("MorningsidePlots").doc(plotId)
+			await ref.update({
+				"d.datePlanted": null,
+				"d.ripe": false,
+				"d.sprouted": false,
+				"d.waterCount": 0,
+				"d.wateredDate": null,
+				"d.alive": false
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("pickCrop failed", error)
 		}
 	}
 
