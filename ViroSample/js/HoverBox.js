@@ -1,4 +1,5 @@
 import React from "react"
+import { ViroBox } from "react-viro"
 import { HOVER_BOX_SIDE } from "./constants"
 
 export default function HoverBox(props) {

@@ -3,6 +3,7 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { Vibration } from "react-native"
+import { HoverBox, PlotNode } from "./"
 
 import {
 	ViroARScene,
@@ -184,29 +185,34 @@ class ARMode extends Component {
 				onAnchorFound={this._onAnchorFound}
 				style={{ flex: 1 }}
 			>
-				<Particles
+				{/* <Particles
 					seedablePlot={this.state.seedablePlot}
 					animate={this.state.animateSeeds}
 					coords={x => this._getARCoords(x, 0)}
-				/>
+				/> */}
 				{this.props.plots.map(plot => (
 					<HoverBox position={this._getARCoords(plot, 0)} />
 				))}
 				{this.state.anchorsFound.map(anchor => (
-					<ViroBox
-						onClick={() => this._onClick(this._plotHere(anchor))}
-						onHover={this._onHover(anchor)}
-						height={PLOT_HEIGHT}
-						width={PLOT_WIDTH}
-						length={PLOT_LENGTH}
-						materials={["dirt"]}
+					<PlotNode
 						position={this._getARCoords(
 							this._plotHere(anchor),
 							anchor.position[1]
 						)}
+						plot={this._plotHere(anchor)}
 					/>
+					// <ViroBox
+					// 	onClick={() => this._onClick(this._plotHere(anchor))}
+					// 	onHover={this._onHover(anchor)}
+					// 	height={PLOT_HEIGHT}
+					// 	width={PLOT_WIDTH}
+					// 	length={PLOT_LENGTH}
+					// 	materials={["dirt"]}
+
+					// 	)}
+					// />
 				))}
-				{this.state.anchorsFound.map(anchor => (
+				{/* {this.state.anchorsFound.map(anchor => (
 					<ViroSphere
 						radius={MARKER_RADIUS}
 						position={this._getARCoords(
@@ -215,7 +221,7 @@ class ARMode extends Component {
 						)}
 						materials={this._getPlotButton(this._plotHere(anchor))}
 					/>
-				))}
+				))} */}
 				<ViroAmbientLight color="#FFFFFF" />
 				{hoeSelected ? (
 					<ViroARPlaneSelector
@@ -277,9 +283,9 @@ module.exports = connect(
 	state => ({ plots: state.plots, coords: state.coords, seed: state.seed }),
 	dispatch => ({
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
-		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng)),
-		waterPlot: plot => dispatch(waterPlot(plot)),
-		seedPlot: (plot, seed) => dispatch(seedPlot(plot, seed)),
-		pickPlot: plot => dispatch(pickPlot(plot))
+		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng))
+		// waterPlot: plot => dispatch(waterPlot(plot)),
+		// seedPlot: (plot, seed) => dispatch(seedPlot(plot, seed)),
+		// pickPlot: plot => dispatch(pickPlot(plot))
 	})
 )(ARMode)

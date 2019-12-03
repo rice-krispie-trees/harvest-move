@@ -13,17 +13,6 @@ export const wateredPlot = plot => ({ type: WATERED_PLOT, plot })
 export const seededPlot = plot => ({ type: SEEDED_PLOT, plot })
 export const pickedPlot = (plot, crop) => ({ type: PICKED_PLOT, plot, crop })
 
-// export const getAllPlots = () => async dispatch => {
-// 	try {
-// 		await FirebaseWrapper.GetInstance().SetupCollectionListener(
-// 			"PeetPlotz",
-// 			plots => dispatch(gotAllPlots(plots))
-// 		)
-// 	} catch (error) {
-// 		console.log("error getting all plots", error)
-// 	}
-// }
-
 export const getAllPlots = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().getNearbyPlots(
