@@ -38,9 +38,9 @@ class ARMode extends Component {
 			error: null,
 			plots: [],
 			anchorsFound: [],
-			water: false,
-			seeds: false,
-			pick: false,
+			waterablePlot: null,
+			seedablePlot: null,
+			pickablePlot: null,
 			animateSeeds: false,
 			clickable: true
 		}
@@ -96,15 +96,16 @@ class ARMode extends Component {
 			if (isHovering) {
 				console.log("hovering on:", plot)
 				that.setState({
-					water: plot.datePlanted && !plot.ripe && !plot.watered ? plot : null,
-					seeds: !plot.datePlanted ? plot : null,
-					pick: plot.ripe ? plot : null
+					waterablePlot:
+						plot.datePlanted && !plot.ripe && !plot.watered ? plot : null,
+					seedablePlot: !plot.datePlanted ? plot : null,
+					pickablePlot: plot.ripe ? plot : null
 				})
 			} else {
 				that.setState({
-					water: null,
-					seeds: null,
-					pick: null
+					waterablePlot: null,
+					seedablePlot: null,
+					pickablePlot: null
 				})
 			}
 		}
@@ -137,28 +138,32 @@ class ARMode extends Component {
 	}
 
 	_getPlotButton(plot) {
-		if (this.state.water === plot) return ["waterButton"]
-		else if (this.state.seeds === plot) return ["seedButton"]
-		else if (this.state.pick === plot) return ["pickButton"]
+		if (this.state.waterablePlot === plot) return ["waterButton"]
+		else if (this.state.seedablePlot === plot) return ["seedButton"]
+		else if (this.state.pickablePlot === plot) return ["pickButton"]
 		return ["frontMaterial"]
 	}
 
 	_onClick(plot) {
 		if (
 			this.state.clickable &&
-			[this.state.seeds, this.state.water, this.state.pick].includes(plot)
+			[
+				this.state.seedablePlot,
+				this.state.waterablePlot,
+				this.state.pickablePlot
+			].includes(plot)
 		) {
-			if (this.state.seeds === plot) {
+			if (this.state.seedablePlot === plot) {
 				this.props.seedPlot(plot, this.props.seed)
 				Vibration.vibrate()
 				Vibration.cancel()
 				this.setState({ animateSeeds: true })
 				// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
-			} else if (this.state.water === plot) {
+			} else if (this.state.waterablePlot === plot) {
 				this.props.waterPlot(plot)
 				Vibration.vibrate()
 				Vibration.cancel()
-			} else if (this.state.pick === plot) {
+			} else if (this.state.pickablePlot === plot) {
 				this.props.pickPlot(plot)
 				Vibration.vibrate()
 				Vibration.cancel()
@@ -179,37 +184,17 @@ class ARMode extends Component {
 				onAnchorFound={this._onAnchorFound}
 				style={{ flex: 1 }}
 			>
-				<ViroParticleEmitter
-					position={
-						this.state.seeds
-							? this._getARCoords(this.state.seeds, 0)
-							: [0, 0, -1]
-					}
-					duration={2000}
-					run={this.state.animateSeeds}
-					image={{
-						source: require("./res/particle_firework.png"),
-						height: 0.1,
-						width: 0.1
-					}}
+				<Particles
+					seedablePlot={this.state.seedablePlot}
+					animate={this.state.animateSeeds}
+					coords={x => this._getARCoords(x, 0)}
 				/>
-				{this.props.plots.map(plot => {
-					return (
-						<ViroBox
-							// onClick={(position, source) => this._onClick(plot)}
-							height={0.05}
-							width={0.05}
-							length={0.05}
-							position={this._getARCoords(plot, 0)}
-							materials={this._getPlotButton(plot)}
-						/>
-					)
-				})}
+				{this.props.plots.map(plot => (
+					<HoverBox position={this._getARCoords(plot, 0)} />
+				))}
 				{this.state.anchorsFound.map(anchor => (
 					<ViroBox
-						onClick={(position, source) =>
-							this._onClick(this._plotHere(anchor))
-						}
+						onClick={() => this._onClick(this._plotHere(anchor))}
 						onHover={this._onHover(anchor)}
 						height={PLOT_HEIGHT}
 						width={PLOT_WIDTH}
