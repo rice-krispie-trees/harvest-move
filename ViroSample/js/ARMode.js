@@ -75,8 +75,8 @@ class ARMode extends Component {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
 		await this.props.makeNewPlot(lat, lng)
 		const map = { ...this.state.plotAnchorMap }
-		// map[plot.id] = anchor
-		// this.setState({ plotAnchorMap: map })
+		map[this.state.plots[0].id] = anchor
+		this.setState({ plotAnchorMap: map })
 	}
 
 	_plotHere(anchor) {

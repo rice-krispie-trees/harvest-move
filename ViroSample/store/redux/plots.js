@@ -102,7 +102,7 @@ export default function(state = initialState, action) {
 		case GOT_ALL_PLOTS:
 			return action.plots
 		case MADE_NEW_PLOT:
-			return [...state, action.plot]
+			return [action.plot, ...state]
 		case WATERED_PLOT:
 			return replacePlot(state, action)
 		case SEEDED_PLOT:
