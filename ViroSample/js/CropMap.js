@@ -72,7 +72,7 @@ export default class CropMap extends Component {
   }
 
   getDate(timestamp) {
-    if (!timestamp) return 'Not planted';
+    if (!timestamp) return 'Nothing has been planted';
     else return new Date(timestamp);
   }
 
@@ -104,8 +104,9 @@ export default class CropMap extends Component {
             >
               <MapView.Callout>
                 <Text style={{ fontWeight: 'bold' }}>{!plot.d.alive ? 'This plot is untilled. Drop by to start farming!' :
-                  plot.d.crop ? plot.d.crop : 'Oh no! You lost the crop'}</Text>
-                <Text>Test2!</Text>
+                  plot.d.crop ? plot.d.crop : 'Oh no! The crop died!'}</Text>
+                {plot.d.datePlanted &&
+                  <Text>This crop was planted on: ${this.getDate(plot.d.datePlanted.seconds)}</Text>}
               </MapView.Callout>
             </Marker>
           );
