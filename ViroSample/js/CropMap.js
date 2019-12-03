@@ -22,8 +22,11 @@ export default class CropMap extends Component {
         { name: "NYSE", lat: 40.706975, long: -74.011083 },
         { name: "Pier 17", lat: 40.70604, long: -74.002623 }
       ],
-      plots: []
+      plots: [],
+      active: false
     };
+    this.pinColor = this.pinColor.bind(this);
+    this.getDate = this.getDate.bind(this);
   }
 
   async componentDidMount() {
@@ -57,9 +60,19 @@ export default class CropMap extends Component {
     // );
 
     await FirebaseWrapper.GetInstance().SetupCollectionListener(
-      "Plots",
+      "FullstackPlots",
       plots => this.setState({ plots })
     );
+  }
+
+  pinColor(plot) {
+    if (plot.d.waterCount > 0) return "#1ca3ec";
+    else if (plot.d.alive) return "#915118";
+    else return "red";
+  }
+
+  getDate(timestamp) {
+    return new Date(timestamp * 1000);
   }
 
   render() {
@@ -75,18 +88,34 @@ export default class CropMap extends Component {
       >
         <Marker
           coordinate={this.state.location}
-          pinColor="#4CB8EF"
+          pinColor="#2FB906"
           onPress={() => this.props.navigation.navigate("Home")}
         />
         {this.state.plots.map(plot => {
           return (
             <Marker
-              key={plot.d.name}
+              key={plot.d.id}
+              pinColor={this.pinColor(plot)}
               coordinate={{
                 latitude: plot.d.coordinates.latitude,
                 longitude: plot.d.coordinates.longitude
               }}
-            />
+            >
+              <MapView.Callout>
+                <Text style={{ fontWeight: 'bold' }}>{!plot.d.alive ? 'This plot is untilled. Drop by to start farming!' :
+                  plot.d.crop ? plot.d.crop[0].toUpperCase() + plot.d.crop.slice(1) : 'Oh no! You forgot to water and the crop died!'}
+                </Text>
+                {plot.d.datePlanted &&
+                  <Text>Crop planted on: {this.getDate(plot.d.datePlanted.seconds).toString().split(' ').slice(0, 3).join(' ')}</Text>
+                }
+                {plot.d.ripe ?
+                  <Text style={{ color: "green" }}>This crop is ripe! Come by to collect the harvest.</Text>
+                  : plot.d.watered ?
+                    <Text style={{ color: "blue" }}>This crop has been watered. Wait until it sprouts!</Text>
+                    : <Text style={{ color: "#1ca3ec" }}>Stop by and water this crop.</Text>
+                }
+              </MapView.Callout>
+            </Marker>
           );
         })}
       </MapView>
@@ -107,4 +136,15 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject
   }
+  // button: {
+  //   marginBottom: 30,
+  //   width: 20,
+  //   alignItems: 'center',
+  //   backgroundColor: '#2196F3'
+  // }
+  // buttonText: {
+  //   textAlign: 'center',
+  //   padding: 20,
+  //   color: 'white'
+  // }
 });
