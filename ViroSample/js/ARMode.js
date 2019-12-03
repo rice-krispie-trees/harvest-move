@@ -9,8 +9,7 @@ import {
 	ViroConstants,
 	ViroMaterials,
 	ViroARPlaneSelector,
-	ViroAmbientLight,
-	ViroBox
+	ViroAmbientLight
 } from "react-viro"
 
 import { PLOT_WIDTH, PLOT_LENGTH } from "./constants"
@@ -20,11 +19,8 @@ class ARMode extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			text: "Initializing AR...",
 			loaded: false,
 			error: null,
-			plots: [],
-			anchorsFound: [],
 			plotAnchorMap: {}
 		}
 		this._onInitialized = this._onInitialized.bind(this)
@@ -75,7 +71,8 @@ class ARMode extends Component {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
 		await this.props.makeNewPlot(lat, lng)
 		const map = { ...this.state.plotAnchorMap }
-		map[this.state.plots[0].id] = anchor
+		console.log(this.props.plots)
+		map[this.props.plots[0].id] = anchor
 		this.setState({ plotAnchorMap: map })
 	}
 
@@ -121,7 +118,6 @@ class ARMode extends Component {
 				{this.props.plots.map(plot => (
 					<HoverBox position={this._getARCoords(plot, 0)} />
 				))}
-				{/* {this.state.anchorsFound.map(anchor => ( */}
 				{this._mapAnchorsFound(anchor => (
 					<PlotNode
 						position={this._getARCoords(
@@ -136,15 +132,7 @@ class ARMode extends Component {
 					<ViroARPlaneSelector
 						alignment="Horizontal"
 						onPlaneSelected={this._onSelected}
-					>
-						{/* <ViroBox
-							height={0.0001}
-							width={0.8}
-							length={0.8}
-							materials={["dirt"]}
-							position={[0, 0, 0]}
-						/> */}
-					</ViroARPlaneSelector>
+					/>
 				) : (
 					""
 				)}
@@ -192,8 +180,5 @@ module.exports = connect(
 	dispatch => ({
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
 		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng))
-		// waterPlot: plot => dispatch(waterPlot(plot)),
-		// seedPlot: (plot, seed) => dispatch(seedPlot(plot, seed)),
-		// pickPlot: plot => dispatch(pickPlot(plot))
 	})
 )(ARMode)
