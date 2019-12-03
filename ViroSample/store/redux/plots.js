@@ -1,6 +1,14 @@
 import { FirebaseWrapper } from "../../firebase/firebase"
 import firebasePath from "../../firebase_path"
 
+import {
+	hasDied,
+	hasSprouted,
+	hasRipened,
+	hasDried,
+	hasChanged
+} from "../../js/logic"
+
 export const GOT_ALL_PLOTS = "GOT_ALL_PLOTS"
 export const MADE_NEW_PLOT = "MADE_NEW_PLOT"
 export const WATERED_PLOT = "WATERED_PLOT"
@@ -15,18 +23,27 @@ export const pickedPlot = (plot, crop) => ({ type: PICKED_PLOT, plot, crop })
 
 export const getAllPlots = (lat, lng) => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().getNearbyPlots(
-			firebasePath,
+		await FirebaseWrapper.GetInstance().getAndUpdatePlots(
 			lat,
 			lng,
-			2,
-			50,
-			plots => dispatch(gotAllPlots(plots))
+			async plots => dispatch(gotAllPlots(plots))
 		)
 	} catch (error) {
 		console.log("error getting all plots", error)
 	}
 }
+
+// 	const updatePlots = plots => async dispatch => {
+// 		try {
+// 			// await Promise.all(plots.filter(hasDied).map(plot => XXX))
+// 			// await Promise.all(plots.filter(hasSprouted).map(plot => XXX))
+// 			// await Promize.all(plots.filter)
+// 		} catch (error) {
+// 			console.log("error updating plots", error)
+// 		}
+// 	}
+// }
+
 export const makeNewPlot = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().createPlot(

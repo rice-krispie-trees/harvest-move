@@ -1,12 +1,9 @@
 import * as firebase from "firebase"
 import "firebase/firestore"
+import "firebase/auth"
 import firebasePath from "../firebase_path"
-import {
-	GeoCollectionReference,
-	GeoFirestore,
-	GeoQuery,
-	GeoQuerySnapshot
-} from "geofirestore"
+import { GeoFirestore } from "geofirestore"
+import { hasDied, hasDried, hasRipened, hasSprouted } from "../js/logic"
 
 // const getNewDocId = async collectionPath => {
 //   const docIdRef = await firebase
@@ -25,12 +22,14 @@ export class FirebaseWrapper {
 		this._firebaseInstance = null
 		this._firebaseWrapperInstance = null
 		this._firestore = null
+		this._auth = null
 	}
 
 	Initialize(config) {
 		if (!this.initialized) {
 			this._firebaseInstance = firebase.initializeApp(config)
 			this._firestore = firebase.firestore()
+			this._auth = firebase.auth()
 			this.initialized = true
 		} else {
 			console.log("already initialized")
@@ -44,6 +43,32 @@ export class FirebaseWrapper {
 		return this._firebaseWrapperInstance
 	}
 
+	async FirebaseLoginUser(email, password, callback) {
+		try {
+			this._auth
+				.signInWithEmailAndPassword(email, password)
+				.then(user => callback(user))
+		} catch (error) {
+			console.log("FirebaseLoginUser failed", error)
+		}
+	}
+
+	async FirebaseLogoutUser(callback) {
+		try {
+			this._auth.signOut().then(callback)
+		} catch (error) {
+			console.log("FirebaseLogoutUser failed", error)
+		}
+	}
+
+	async FirebaseVerifyAuth(callback) {
+		try {
+			this._auth.onAuthStateChanged(user => callback(user))
+		} catch (error) {
+			console.log("FirebaseVerifyAuth failed", error)
+		}
+	}
+
 	async CreateNewDocument(collectionPath, doc) {
 		try {
 			const ref = this._firestore.collection(collectionPath).doc()
@@ -51,6 +76,44 @@ export class FirebaseWrapper {
 			return await ref.set({ ...doc, createdAt: timestamp, id: ref.id })
 		} catch (error) {
 			console.log("something went wrong", error)
+		}
+	}
+
+	async getAndUpdatePlots(userLatitude, userLongitude, callback) {
+		try {
+			const geofirestore = new GeoFirestore(this._firestore)
+			const geocollection = geofirestore.collection(firebasePath)
+			const coordinates = new firebase.firestore.GeoPoint(
+				userLatitude,
+				userLongitude
+			)
+			geofirestore.runTransaction(async transaction => {
+				const query = geocollection.near({
+					center: coordinates,
+					radius: 10
+				})
+				const results = await query.get()
+				const container = []
+				results.forEach(plotDoc => {
+					plot = plotDoc.data()
+					if (hasDied(plot)) {
+						transaction.update(plotDoc, { "d.alive": false })
+					} else {
+						if (hasDried(plot)) {
+							transaction.update(plotDoc, { "d.watered": false })
+						}
+						if (hasRipened(plot)) {
+							transaction.update(plotDoc, { "d.ripe": true })
+						} else if (hasSprouted(plot)) {
+							transaction.update(plotDoc, { "d.sprouted": true })
+						}
+					}
+					container.push(plotDoc.data())
+				})
+				return callback(container)
+			})
+		} catch (error) {
+			console.log("get nearby plots failed", error)
 		}
 	}
 
@@ -96,6 +159,21 @@ export class FirebaseWrapper {
 		}
 	}
 
+	async SetupCollectionListener(collectionPath, callback) {
+		try {
+			await this._firestore
+				.collection(collectionPath)
+				.onSnapshot(querySnapshot => {
+					let container = []
+					querySnapshot.forEach(doc => {
+						container.push(doc.data())
+					})
+					return callback(container)
+				})
+		} catch (error) {
+			console.log("you didnt listen", error)
+		}
+	}
 	async getNearbyPlots(
 		collectionPath,
 		userLatitude,
@@ -174,7 +252,7 @@ export class FirebaseWrapper {
 				"d.waterCount": 0,
 				"d.wateredDate": null,
 				"d.alive": false,
-				"d.seed": null
+				"d.crop": null
 			})
 			const cropRef = this._firestore.collection("CropBasket").doc(crop)
 			await batch.update(cropRef, {
@@ -185,23 +263,6 @@ export class FirebaseWrapper {
 			})
 		} catch (error) {
 			console.log("pickCrop failed", error)
-		}
-	}
-
-	async SetupCollectionListener(collectionPath, callback) {
-		try {
-			await this._firestore
-				.collection(collectionPath)
-				// .orderBy("createdAt", "desc")
-				.onSnapshot(querySnapshot => {
-					let container = []
-					querySnapshot.forEach(doc => {
-						container.push(doc.data())
-					})
-					return callback(container)
-				})
-		} catch (error) {
-			console.log("you didnt listen", error)
 		}
 	}
 }

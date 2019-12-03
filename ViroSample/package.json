@@ -5,7 +5,8 @@
   "scripts": {
     "prestart": "./node_modules/react-viro/bin/run_ngrok.sh",
     "start": "node node_modules/react-native/local-cli/cli.js start",
-		"test": "NODE_ENV='test' mocha \"./logic/**/*.spec.js\" \"./server/**/*.spec.js\" \"./js/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"  },
+    "test": "NODE_ENV='test' mocha \"./logic/**/*.spec.js\" \"./server/**/*.spec.js\" \"./js/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
+  },
   "dependencies": {
     "firebase": "^7.4.0",
     "geofirestore": "^3.3.1",
@@ -28,10 +29,10 @@
     "utm-latlng": "^1.0.5"
   },
   "devDependencies": {
-		"@babel/polyfill": "^7.7.0",
-		"@babel/register": "^7.7.4",
-		"chai": "^4.2.0",
-		"mocha": "^6.2.2",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/register": "^7.7.4",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
     "@babel/core": "7.7.2",
     "@babel/runtime": "7.7.2",
     "babel-jest": "24.9.0",

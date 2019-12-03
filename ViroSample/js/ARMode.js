@@ -55,6 +55,7 @@ class ARMode extends Component {
 
 	async componentDidMount() {
 		await this.props.getAllPlots(this.props.coords.lat, this.props.coords.lng)
+		console.log([...this.props.plots])
 		this.setState({ loaded: true })
 	}
 

@@ -1,51 +1,85 @@
-import React from "react"
-import { View, Text, Button } from "react-native"
-//import { GoogleSignin } from "react-native-google-signin"
-import * as firebase from "firebase"
+import React, { Component } from "react";
+import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { connect } from "react-redux";
+import { Actions } from "react-native-router-flux";
+import { loginUser } from "../store/redux/auth";
 
-export default class Login extends React.Component {
-	constructor(props) {
-		super(props)
-		this.googleLogin = this.googleLogin.bind(this)
-	}
+class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      password: ""
+    };
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-	// googleLogin() {
-	// 	console.log("Hello World")
-	// }
+  handleEmailChange = ({ target }) => {
+    this.setState({ email: target.value });
+  };
 
-	async googleLogin() {
-		try {
-			// Add any configuration settings here:
-			await GoogleSignin.configure()
+  handlePasswordChange = ({ target }) => {
+    this.setState({ password: target.value });
+  };
 
-			const data = await GoogleSignin.signIn()
+  handleSubmit = () => {
+    const { dispatch } = this.props;
+    const { email, password } = this.state;
+    dispatch(loginUser(email, password));
+  };
 
-			// create a new firebase credential with the token
-			const credential = firebase.auth.GoogleAuthProvider.credential(
-				data.idToken,
-				data.accessToken
-			)
-			// login with credential
-			const currentUser = await firebase.auth().signInWithCredential(credential)
-
-			console.info(JSON.stringify(currentUser.toJSON()))
-		} catch (e) {
-			// console.error(e)
-			console.log("google login has fucked up!", e)
-		}
-	}
-
-	render() {
-		return (
-			<View>
-				<Text>Behold, our login page.</Text>
-				<View>
-					{/* <Button
-						title="Sign in with Google"
-						onPress={this.googleLogin}
-					></Button> */}
-				</View>
-			</View>
-		)
-	}
+  render() {
+    const { loginError, isAuthenticated } = this.props;
+    if (isAuthenticated) {
+      return (
+        <View>
+          <Button title="Start Farming" onPress={() => Actions.home()} />
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <Text>Welcome to HarvestMove</Text>
+          <View>
+            <TextInput
+              onChange={this.handleEmailChange}
+              onChangeText={text => this.setState({ email: text })}
+              placeholder="email"
+              value={this.state.email}
+            />
+            <TextInput
+              onChange={this.handlePasswordChange}
+              onChangeText={text => this.setState({ password: text })}
+              placeholder="password"
+              value={this.state.password}
+            />
+            {loginError && <Text>Incorrect email or password</Text>}
+            <Button
+              style={styles.button}
+              title="Sign In"
+              onPress={() => this.handleSubmit()}
+            />
+          </View>
+        </View>
+      );
+    }
+  }
 }
+
+const styles = StyleSheet.create({
+  button: {
+    position: "absolute",
+    bottom: 0
+  }
+});
+
+const mapStateToProps = state => {
+  return {
+    isLoggingIn: state.auth.isLoggingIn,
+    loginError: state.auth.loginError,
+    isAuthenticated: state.auth.isAuthenticated
+  };
+};
+export default connect(mapStateToProps)(Login);

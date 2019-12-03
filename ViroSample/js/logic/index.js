@@ -12,7 +12,7 @@ export function midnightsBetween(date1, date2) {
 
 export function update(plot, now = new Date()) {
 	const crop = crops[plot.crop]
-	// console.log("planted?:", !!plot.datePlanted)
+	plot = { ...plot }
 	if (plot.datePlanted) {
 		const daysSincePlanted = (now - plot.datePlanted) / millisecondsPerDay
 		let daysSinceWatered
@@ -36,4 +36,34 @@ export function update(plot, now = new Date()) {
 		}
 	}
 	return plot
+}
+
+export function hasDied(plot) {
+	return plot.alive && !update(plot).alive
+}
+
+export function hasSprouted(plot) {
+	const updatedPlot = update(plot)
+	return (
+		!plot.sprouted &&
+		updatedPlot.sprouted &&
+		updatedPlot.alive &&
+		!updatedPlot.ripe
+	)
+}
+
+export function hasRipened(plot) {
+	const updatedPlot = update(plot)
+	return !plot.ripe && updatedPlot.ripe && updatedPlot.alive
+}
+
+export function hasDried(plot) {
+	const updatedPlot = update(plot)
+	return updatedPlot.alive && plot.watered && !updatedPlot.watered
+}
+
+export function hasChanged(plot) {
+	return (
+		hasDied(plot) || hasSprouted(plot) || hasRipened(plot) || hasDried(plot)
+	)
 }
