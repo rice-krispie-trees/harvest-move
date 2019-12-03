@@ -13,13 +13,6 @@ const day3at2am = day2at8pm + 6 * hour
 const day3at8pm = day2at8pm + 24 * hour
 const day3at9pm = day3at8pm + hour
 
-const corn = {
-	waterCountPerDay: 1,
-	harvestTime: 1,
-	sproutTime: 2,
-	sensitivity: 1.5
-}
-
 const makeEmptyPlot = () => ({
 	datePlanted: null,
 	wateredDate: null,
@@ -34,7 +27,7 @@ const makeEmptyPlot = () => ({
 const makeCornPlot = datePlanted => ({
 	datePlanted,
 	wateredDate: null,
-	crop: corn,
+	crop: "testCrop",
 	watered: false,
 	ripe: false,
 	sprouted: false,
@@ -44,7 +37,7 @@ const makeCornPlot = datePlanted => ({
 
 const makeWateredCornPlot = datePlanted => ({
 	datePlanted,
-	crop: corn,
+	crop: "testCrop",
 	wateredDate: datePlanted,
 	watered: true,
 	ripe: false,

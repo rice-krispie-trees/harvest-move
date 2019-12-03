@@ -1,12 +1,7 @@
 import * as firebase from "firebase"
 import "firebase/firestore"
 import firebasePath from "../firebase_path"
-import {
-	GeoCollectionReference,
-	GeoFirestore,
-	GeoQuery,
-	GeoQuerySnapshot
-} from "geofirestore"
+import { GeoFirestore } from "geofirestore"
 
 // const getNewDocId = async collectionPath => {
 //   const docIdRef = await firebase

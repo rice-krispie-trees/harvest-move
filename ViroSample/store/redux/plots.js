@@ -1,6 +1,14 @@
 import { FirebaseWrapper } from "../../firebase/firebase"
 import firebasePath from "../../firebase_path"
 
+import {
+	hasDied,
+	hasSprouted,
+	hasRipened,
+	hasDried,
+	hasChanged
+} from "../../js/logic"
+
 export const GOT_ALL_PLOTS = "GOT_ALL_PLOTS"
 export const MADE_NEW_PLOT = "MADE_NEW_PLOT"
 export const WATERED_PLOT = "WATERED_PLOT"
@@ -32,7 +40,12 @@ export const getAllPlots = (lat, lng) => async dispatch => {
 			lng,
 			2,
 			50,
-			plots => dispatch(gotAllPlots(plots))
+			async plots => {
+				// await Promise.all(
+				// 	plots.filter(hasChanged).map()
+				// )
+				dispatch(gotAllPlots(plots))
+			}
 		)
 	} catch (error) {
 		console.log("error getting all plots", error)

@@ -9,8 +9,9 @@ export default connect(
 	dispatch => ({ getUserCoords: () => dispatch(getUserCoords()) })
 )(
 	class extends React.Component {
-		componentDidMount() {
-			this.props.getUserCoords()
+		async componentDidMount() {
+			await this.props.getUserCoords()
+			console.log({ ...this.props.coordinates })
 		}
 		render() {
 			return (
