@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, Button, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { FirebaseWrapper } from "../firebase/firebase";
+// import Callout from 'react-callout-component';
 // import { createStackNavigator, createBottomTabNavigator, navigate } from 'react-navigation';
 
 export default class CropMap extends Component {
@@ -29,19 +30,19 @@ export default class CropMap extends Component {
   }
 
   async componentDidMount() {
-    // navigator.geolocation.getCurrentPosition(
-    //   position => {
-    //     this.setState({
-    //       location: {
-    //         latitude: position.coords.latitude,
-    //         longitude: position.coords.longitude,
-    //         error: null
-    //       }
-    //     });
-    //   },
-    //   error => this.setState({ location: { error: error.message } }),
-    //   { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
-    // );
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        this.setState({
+          location: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            error: null
+          }
+        });
+      },
+      error => this.setState({ location: { error: error.message } }),
+      { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
+    );
     // this.state.hardcoded.forEach(async loc => {
     //   await FirebaseWrapper.GetInstance().createPlot(
     //     "Plots",
@@ -88,7 +89,7 @@ export default class CropMap extends Component {
       >
         <Marker
           coordinate={this.state.location}
-          pinColor="#4CB8EF"
+          pinColor="#2FB906"
           onPress={() => this.props.navigation.navigate("Home")}
         />
         {this.state.plots.map(plot => {
@@ -101,10 +102,11 @@ export default class CropMap extends Component {
                 longitude: plot.d.coordinates.longitude
               }}
             >
-              {/* <Text style={{ fontWeight: 'bold' }}>{plot.d.name}</Text>
-              {!plot.d.alive &&
-                <Text>Nothing</Text>
-              } */}
+              <MapView.Callout>
+                <Text style={{ fontWeight: 'bold' }}>{!plot.d.alive ? 'This plot is untilled. Drop by to start farming!' :
+                  plot.d.crop ? plot.d.crop : 'Oh no! You lost the crop'}</Text>
+                <Text>Test2!</Text>
+              </MapView.Callout>
             </Marker>
           );
         })}
