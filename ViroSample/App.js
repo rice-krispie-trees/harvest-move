@@ -66,7 +66,7 @@ class ViroSample extends Component {
 			<Router navigationBarStyle={{ backgroundColor: '#F8C752' }}
 				titleStyle={{ color: "rgba(255,255,255,1)" }}>
 				<Stack key="root">
-					<Scene key="login" component={Login} title="Welcome to Harvest Move" />
+					{/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
 					<Scene key="home" component={Home} title="Harvest Move" />
 					<Scene
 						key="map"
