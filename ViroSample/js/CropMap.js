@@ -66,7 +66,7 @@ export default class CropMap extends Component {
   }
 
   pinColor(plot) {
-    if (plot.d.waterCount > 0) return "#1ca3ec";
+    if (plot.d.alive && plot.d.crop && !plot.d.watered) return "#1ca3ec";
     else if (plot.d.alive) return "#915118";
     else return "red";
   }
@@ -110,10 +110,10 @@ export default class CropMap extends Component {
                 }
                 {plot.d.ripe ?
                   <Text style={{ color: "green" }}>This crop is ripe! Come by to collect the harvest.</Text>
-                  : plot.d.watered ?
-                    <Text style={{ color: "blue" }}>This crop has been watered. Wait until it sprouts!</Text>
-                    : <Text style={{ color: "#1ca3ec" }}>Stop by and water this crop.</Text>
-                }
+                  : (plot.d.watered ?
+                    <Text style={{ color: "#915118" }}>This crop has been watered. Wait until it sprouts!</Text>
+                    : plot.d.alive && plot.d.crop && <Text style={{ color: "#1ca3ec" }}>Stop by and water this crop.</Text>
+                  )}
               </MapView.Callout>
             </Marker>
           );
