@@ -108,12 +108,11 @@ export default class CropMap extends Component {
                 {plot.d.datePlanted &&
                   <Text>Crop planted on: {this.getDate(plot.d.datePlanted.seconds).toString().split(' ').slice(0, 3).join(' ')}</Text>
                 }
-                {plot.d.ripe &&
+                {plot.d.ripe ?
                   <Text style={{ color: "green" }}>This crop is ripe! Come by to collect the harvest.</Text>
-                }
-                {plot.d.watered ?
-                  <Text style={{ color: "blue" }}>This crop has been watered. Wait until it sprouts!</Text>
-                  : <Text style={{ color: "#1ca3ec" }}>Stop by and water this crop.</Text>
+                  : plot.d.watered ?
+                    <Text style={{ color: "blue" }}>This crop has been watered. Wait until it sprouts!</Text>
+                    : <Text style={{ color: "#1ca3ec" }}>Stop by and water this crop.</Text>
                 }
               </MapView.Callout>
             </Marker>
