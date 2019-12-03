@@ -34,23 +34,27 @@ export const pickedPlot = (plot, crop) => ({ type: PICKED_PLOT, plot, crop })
 
 export const getAllPlots = (lat, lng) => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().getNearbyPlots(
-			firebasePath,
+		await FirebaseWrapper.GetInstance().getAndUpdatePlots(
 			lat,
 			lng,
-			2,
-			50,
-			async plots => {
-				// await Promise.all(
-				// 	plots.filter(hasChanged).map()
-				// )
-				dispatch(gotAllPlots(plots))
-			}
+			async plots => dispatch(gotAllPlots(plots))
 		)
 	} catch (error) {
 		console.log("error getting all plots", error)
 	}
 }
+
+// 	const updatePlots = plots => async dispatch => {
+// 		try {
+// 			// await Promise.all(plots.filter(hasDied).map(plot => XXX))
+// 			// await Promise.all(plots.filter(hasSprouted).map(plot => XXX))
+// 			// await Promize.all(plots.filter)
+// 		} catch (error) {
+// 			console.log("error updating plots", error)
+// 		}
+// 	}
+// }
+
 export const makeNewPlot = (lat, lng) => async dispatch => {
 	try {
 		await FirebaseWrapper.GetInstance().createPlot(

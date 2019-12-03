@@ -2,6 +2,7 @@ import * as firebase from "firebase"
 import "firebase/firestore"
 import firebasePath from "../firebase_path"
 import { GeoFirestore } from "geofirestore"
+import { hasDied, hasDried, hasRipened, hasSprouted } from "../js/logic"
 
 // const getNewDocId = async collectionPath => {
 //   const docIdRef = await firebase
@@ -123,6 +124,44 @@ export class FirebaseWrapper {
 		}
 	}
 
+	async getAndUpdatePlots(userLatitude, userLongitude, callback) {
+		try {
+			const geofirestore = new GeoFirestore(this._firestore)
+			const geocollection = geofirestore.collection(firebasePath)
+			const coordinates = new firebase.firestore.GeoPoint(
+				userLatitude,
+				userLongitude
+			)
+			geofirestore.runTransaction(async transaction => {
+				const query = geocollection.near({
+					center: coordinates,
+					radius: 10
+				})
+				const results = await query.get()
+				const container = []
+				results.forEach(plotDoc => {
+					plot = plotDoc.data()
+					if (hasDied(plot)) {
+						transaction.update(plotDoc, { "d.alive": false })
+					} else {
+						if (hasDried(plot)) {
+							transaction.update(plotDoc, { "d.watered": false })
+						}
+						if (hasRipened(plot)) {
+							transaction.update(plotDoc, { "d.ripe": true })
+						} else if (hasSprouted(plot)) {
+							transaction.update(plotDoc, { "d.sprouted": true })
+						}
+					}
+					container.push(plotDoc.data())
+				})
+				return callback(container)
+			})
+		} catch (error) {
+			console.log("get nearby plots failed", error)
+		}
+	}
+
 	async seedPlot(plotId, seed, callback) {
 		try {
 			const batch = this._firestore.batch()
@@ -169,7 +208,7 @@ export class FirebaseWrapper {
 				"d.waterCount": 0,
 				"d.wateredDate": null,
 				"d.alive": false,
-				"d.seed": null
+				"d.crop": null
 			})
 			const cropRef = this._firestore.collection("CropBasket").doc(crop)
 			await batch.update(cropRef, {
@@ -182,6 +221,25 @@ export class FirebaseWrapper {
 			console.log("pickCrop failed", error)
 		}
 	}
+
+	// async killPlot(plotIds) {
+	// 	try {
+	// 		const batch = this._firestore.batch()
+	// 		const plotRefs = plotIds.map(id =>
+	// 			this._firestore.collection(firebasePath).doc(id)
+	// 		)
+	// 		await Promise.all(
+	// 			plotRefs.map(plotRef =>
+	// 				batch.update(plotRef, {
+	// 					"d.alive": false
+	// 				})
+	// 			)
+	// 		)
+	// 		await batch.commit().then(async)
+	// 	} catch (error) {
+	// 		console.log("killPlot failed", error)
+	// 	}
+	// }
 
 	async SetupCollectionListener(collectionPath, callback) {
 		try {
