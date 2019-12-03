@@ -2,7 +2,6 @@
 
 import React, { Component } from "react"
 import { connect } from "react-redux"
-import { Vibration } from "react-native"
 import { HoverBox, PlotNode } from "./"
 
 import {
@@ -11,24 +10,11 @@ import {
 	ViroMaterials,
 	ViroARPlaneSelector,
 	ViroAmbientLight,
-	ViroBox,
-	ViroParticleEmitter,
-	ViroSphere
+	ViroBox
 } from "react-viro"
 
-import {
-	PLOT_WIDTH,
-	PLOT_LENGTH,
-	PLOT_HEIGHT,
-	MARKER_RADIUS
-} from "./constants"
-import {
-	getAllPlots,
-	makeNewPlot,
-	waterPlot,
-	seedPlot,
-	pickPlot
-} from "../store/redux/plots"
+import { PLOT_WIDTH, PLOT_LENGTH } from "./constants"
+import { getAllPlots, makeNewPlot } from "../store/redux/plots"
 
 class ARMode extends Component {
 	constructor(props) {
@@ -38,19 +24,13 @@ class ARMode extends Component {
 			loaded: false,
 			error: null,
 			plots: [],
-			anchorsFound: []
-			// waterablePlot: null,
-			// seedablePlot: null,
-			// pickablePlot: null,
-			// animateSeeds: false,
-			// clickable: true
+			anchorsFound: [],
+			plotAnchorMap: {}
 		}
 		this._onInitialized = this._onInitialized.bind(this)
 		this._getARCoords = this._getARCoords.bind(this)
 		this._onSelected = this._onSelected.bind(this)
 		this._onAnchorFound = this._onAnchorFound.bind(this)
-		// this._onHover = this._onHover.bind(this)
-		// this._onClick = this._onClick.bind(this)
 	}
 
 	async componentDidMount() {
@@ -91,31 +71,12 @@ class ARMode extends Component {
 		return [plotARX, y, -plotARZ]
 	}
 
-	// _onHover(anchor) {
-	// 	const plot = this._plotHere(anchor)
-	// 	const that = this
-	// 	return function(isHovering) {
-	// 		if (isHovering) {
-	// 			console.log("hovering on:", plot)
-	// 			that.setState({
-	// 				waterablePlot:
-	// 					plot.datePlanted && !plot.ripe && !plot.watered ? plot : null,
-	// 				seedablePlot: !plot.datePlanted ? plot : null,
-	// 				pickablePlot: plot.ripe ? plot : null
-	// 			})
-	// 		} else {
-	// 			that.setState({
-	// 				waterablePlot: null,
-	// 				seedablePlot: null,
-	// 				pickablePlot: null
-	// 			})
-	// 		}
-	// 	}
-	// }
-
 	async _onSelected(anchor) {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
 		await this.props.makeNewPlot(lat, lng)
+		const map = { ...this.state.plotAnchorMap }
+		// map[plot.id] = anchor
+		// this.setState({ plotAnchorMap: map })
 	}
 
 	_plotHere(anchor) {
@@ -132,50 +93,21 @@ class ARMode extends Component {
 	}
 
 	_onAnchorFound(anchor) {
-		if (this._plotHere(anchor)) {
-			const newAnchors = [...this.state.anchorsFound]
-			newAnchors.push(anchor)
-			this.setState({ anchorsFound: newAnchors })
+		const plot = this._plotHere(anchor)
+		if (plot && !this.state.plotAnchorMap[plot.id]) {
+			const map = { ...this.state.plotAnchorMap }
+			map[plot.id] = anchor
+			this.setState({ plotAnchorMap: map })
 		}
 	}
 
-	// _getPlotButton(plot) {
-	// 	if (this.state.waterablePlot === plot) return ["waterButton"]
-	// 	else if (this.state.seedablePlot === plot) return ["seedButton"]
-	// 	else if (this.state.pickablePlot === plot) return ["pickButton"]
-	// 	return ["frontMaterial"]
-	// }
-
-	// _onClick(plot) {
-	// 	if (
-	// 		this.state.clickable &&
-	// 		[
-	// 			this.state.seedablePlot,
-	// 			this.state.waterablePlot,
-	// 			this.state.pickablePlot
-	// 		].includes(plot)
-	// 	) {
-	// 		if (this.state.seedablePlot === plot) {
-	// 			this.props.seedPlot(plot, this.props.seed)
-	// 			Vibration.vibrate()
-	// 			Vibration.cancel()
-	// 			this.setState({ animateSeeds: true })
-	// 			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
-	// 		} else if (this.state.waterablePlot === plot) {
-	// 			this.props.waterPlot(plot)
-	// 			Vibration.vibrate()
-	// 			Vibration.cancel()
-	// 		} else if (this.state.pickablePlot === plot) {
-	// 			this.props.pickPlot(plot)
-	// 			Vibration.vibrate()
-	// 			Vibration.cancel()
-	// 		}
-	// 		this.setState({ clickable: false })
-	// 		setTimeout(() => {
-	// 			this.setState({ clickable: true })
-	// 		}, 3000)
-	// 	}
-	// }
+	_mapAnchorsFound(callback) {
+		const container = []
+		for (let key in this.state.plotAnchorMap) {
+			container.push(callback(this.state.plotAnchorMap[key]))
+		}
+		return container
+	}
 
 	render() {
 		let hoeSelected = true
@@ -186,15 +118,11 @@ class ARMode extends Component {
 				onAnchorFound={this._onAnchorFound}
 				style={{ flex: 1 }}
 			>
-				{/* <Particles
-					seedablePlot={this.state.seedablePlot}
-					animate={this.state.animateSeeds}
-					coords={x => this._getARCoords(x, 0)}
-				/> */}
 				{this.props.plots.map(plot => (
 					<HoverBox position={this._getARCoords(plot, 0)} />
 				))}
-				{this.state.anchorsFound.map(anchor => (
+				{/* {this.state.anchorsFound.map(anchor => ( */}
+				{this._mapAnchorsFound(anchor => (
 					<PlotNode
 						position={this._getARCoords(
 							this._plotHere(anchor),
@@ -202,41 +130,20 @@ class ARMode extends Component {
 						)}
 						plot={this._plotHere(anchor)}
 					/>
-					// <ViroBox
-					// 	onClick={() => this._onClick(this._plotHere(anchor))}
-					// 	onHover={this._onHover(anchor)}
-					// 	height={PLOT_HEIGHT}
-					// 	width={PLOT_WIDTH}
-					// 	length={PLOT_LENGTH}
-					// 	materials={["dirt"]}
-
-					// 	)}
-					// />
 				))}
-				{/* {this.state.anchorsFound.map(anchor => (
-					<ViroSphere
-						radius={MARKER_RADIUS}
-						position={this._getARCoords(
-							this._plotHere(anchor),
-							anchor.position[1] + MARKER_RADIUS
-						)}
-						materials={this._getPlotButton(this._plotHere(anchor))}
-					/>
-				))} */}
 				<ViroAmbientLight color="#FFFFFF" />
 				{hoeSelected ? (
 					<ViroARPlaneSelector
 						alignment="Horizontal"
 						onPlaneSelected={this._onSelected}
 					>
-						<ViroBox
-							// onHover={this._onHover(anchor)}
+						{/* <ViroBox
 							height={0.0001}
 							width={0.8}
 							length={0.8}
 							materials={["dirt"]}
 							position={[0, 0, 0]}
-						/>
+						/> */}
 					</ViroARPlaneSelector>
 				) : (
 					""

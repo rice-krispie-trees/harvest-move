@@ -7,7 +7,9 @@ import {
 } from "./constants"
 import { ViroNode, ViroMaterials, ViroSphere, ViroBox } from "react-viro"
 import { Vibration } from "react-native"
+import { connect } from "react-redux"
 import { Particles } from "./"
+import { waterPlot, seedPlot, pickPlot } from "../store/redux/plots"
 
 export default connect(
 	state => ({ seed: state.seed }),
@@ -96,7 +98,6 @@ export default connect(
 					<Particles
 						seedablePlot={this.state.seedablePlot}
 						animate={this.state.animateSeeds}
-						coords={x => this._getARCoords(x, 0)}
 					/>
 					<ViroSphere
 						radius={MARKER_RADIUS}
