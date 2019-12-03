@@ -1,3 +1,12 @@
+export const testCrop = {
+	name: "testCrop",
+	waterCountPerDay: 1,
+	harvestTime: 1,
+	sproutTime: 2,
+	sensitivity: 1.5,
+	value: 50
+}
+
 export const corn = {
 	sproutTime: 2,
 	harvestTime: 2,
@@ -44,6 +53,7 @@ export const wheat = {
 }
 
 export default {
+	testCrop,
 	corn,
 	wheat,
 	strawberry,
