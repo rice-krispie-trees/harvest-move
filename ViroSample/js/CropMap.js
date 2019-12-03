@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { StyleSheet, View, Button, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { FirebaseWrapper } from "../firebase/firebase";
-// import Callout from 'react-callout-component';
 // import { createStackNavigator, createBottomTabNavigator, navigate } from 'react-navigation';
 
 export default class CropMap extends Component {
@@ -23,7 +22,8 @@ export default class CropMap extends Component {
         { name: "NYSE", lat: 40.706975, long: -74.011083 },
         { name: "Pier 17", lat: 40.70604, long: -74.002623 }
       ],
-      plots: []
+      plots: [],
+      active: false
     };
     this.pinColor = this.pinColor.bind(this);
     this.getDate = this.getDate.bind(this);
@@ -72,8 +72,7 @@ export default class CropMap extends Component {
   }
 
   getDate(timestamp) {
-    if (!timestamp) return 'Nothing has been planted';
-    else return new Date(timestamp);
+    return new Date(timestamp * 1000);
   }
 
   render() {
@@ -104,9 +103,18 @@ export default class CropMap extends Component {
             >
               <MapView.Callout>
                 <Text style={{ fontWeight: 'bold' }}>{!plot.d.alive ? 'This plot is untilled. Drop by to start farming!' :
-                  plot.d.crop ? plot.d.crop : 'Oh no! The crop died!'}</Text>
+                  plot.d.crop ? plot.d.crop[0].toUpperCase() + plot.d.crop.slice(1) : 'Oh no! You forgot to water and the crop died!'}
+                </Text>
                 {plot.d.datePlanted &&
-                  <Text>This crop was planted on: ${this.getDate(plot.d.datePlanted.seconds)}</Text>}
+                  <Text>Crop planted on: {this.getDate(plot.d.datePlanted.seconds).toString().split(' ').slice(0, 3).join(' ')}</Text>
+                }
+                {plot.d.ripe &&
+                  <Text style={{ color: "green" }}>This crop is ripe! Come by to collect the harvest.</Text>
+                }
+                {plot.d.watered ?
+                  <Text style={{ color: "blue" }}>This crop has been watered. Wait until it sprouts!</Text>
+                  : <Text style={{ color: "#1ca3ec" }}>Stop by and water this crop.</Text>
+                }
               </MapView.Callout>
             </Marker>
           );
@@ -129,4 +137,15 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject
   }
+  // button: {
+  //   marginBottom: 30,
+  //   width: 20,
+  //   alignItems: 'center',
+  //   backgroundColor: '#2196F3'
+  // }
+  // buttonText: {
+  //   textAlign: 'center',
+  //   padding: 20,
+  //   color: 'white'
+  // }
 });
