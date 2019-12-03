@@ -35,96 +35,81 @@ var sharedProps = {
   apiKey: "API_KEY_HERE"
 };
 
-export default class ViroSample extends Component {
-  constructor() {
-    super();
+class ViroSample extends Component {
+	constructor() {
+		super()
 
-    this.state = {
-      sharedProps: sharedProps
-    };
-    //this._NonARRoot = this._NonARRoot.bind(this)
-    this._getARNavigator = this._getARNavigator.bind(this);
-    this._goToAR = this._goToAR.bind(this);
-    this._exitViro = this._exitViro.bind(this);
-  }
+		this.state = {
+			sharedProps: sharedProps
+		}
+		//this._NonARRoot = this._NonARRoot.bind(this)
+		this._getARNavigator = this._getARNavigator.bind(this)
+		this._goToAR = this._goToAR.bind(this)
+		this._exitViro = this._exitViro.bind(this)
+	}
 
-  // Replace this function with the contents of _getVRNavigator() or _getARNavigator()
-  // if you are building a specific type of experience.
-  render() {
-    FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
-    // 	if (this.state.navigatorType == UNSET) {
-    // 		return this._NonARRoot()
-    // 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
-    // 		return this._getARNavigator()
-    // 	}
-    // }
+	// Replace this function with the contents of _getVRNavigator() or _getARNavigator()
+	// if you are building a specific type of experience.
+	render() {
+		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
+		// 	if (this.state.navigatorType == UNSET) {
+		// 		return this._NonARRoot()
+		// 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
+		// 		return this._getARNavigator()
+		// 	}
+		// }
 
-    // Presents the user with a choice of an AR or VR experience
-    //_NonARRoot() {
-    return (
-      <Provider store={store}>
-        <Router>
-          <Stack key="root">
-            <Scene key="login" component={Login} title="Login" />
-            <Scene key="home" component={Home} title="Home" />
-            <Scene key="map" component={CropMap} title="My Map" />
-            <Scene key="ar" component={AR} />
-          </Stack>
-        </Router>
-      </Provider>
+		// Presents the user with a choice of an AR or VR experience
+		//_NonARRoot() {
+		return (
+		<Provider store={store}>
+			<Router navigationBarStyle={{ backgroundColor: '#F8C752' }}
+				titleStyle={{ color: "rgba(255,255,255,1)" }}>
+				<Stack key="root">
+					<Scene key="login" component={Login} title="Welcome to Harvest Move" />
+					<Scene key="home" component={Home} title="Harvest Move" />
+					<Scene
+						key="map"
+						component={CropMap}
+						title="My Map"
+					/>
+					<Scene
+						key="ar"
+						component={AR}
+					/>
+				</Stack>
+			</Router>
+		</Provider>
+		)
+	}
 
-      // <View style={localStyles.outer}>
-      // 	<View style={localStyles.inner}>
-      // 		<Text style={localStyles.titleText}>
-      // 			Choose your desired experience:
-      // 		</Text>
 
-      // 		<TouchableHighlight
-      // 			style={localStyles.buttons}
-      // 			onPress={this._getExperienceButtonOnPress(AR_NAVIGATOR_TYPE)}
-      // 			underlayColor={"#68a0ff"}
-      // 		>
-      // 			<Text style={localStyles.buttonText}>AR</Text>
-      // 		</TouchableHighlight>
+	// Returns the ViroARSceneNavigator which will start the AR experience
+	_getARNavigator() {
+		return (
+			<ViroARSceneNavigator
+				{...this.state.sharedProps}
+				initialScene={{ scene: InitialARScene }}
+			/>
+		)
+	}
 
-      // 		<TouchableHighlight
-      // 			style={localStyles.buttons}
-      // 			onPress={this._getExperienceButtonOnPress(VR_NAVIGATOR_TYPE)}
-      // 			underlayColor={"#68a0ff"}
-      // 		>
-      // 			<Text style={localStyles.buttonText}>VR</Text>
-      // 		</TouchableHighlight>
-      // 	</View>
-      // </View>
-    );
-  }
+	// This function returns an anonymous/lambda function to be used
+	// by the experience selector buttons
+	_goToAR(navigatorType) {
+		return () => {
+			this.setState({
+				navigatorType: AR_NAVIGATOR_TYPE
+			})
+		}
+	}
 
-  // Returns the ViroARSceneNavigator which will start the AR experience
-  _getARNavigator() {
-    return (
-      <ViroARSceneNavigator
-        {...this.state.sharedProps}
-        initialScene={{ scene: InitialARScene }}
-      />
-    );
-  }
-
-  // This function returns an anonymous/lambda function to be used
-  // by the experience selector buttons
-  _goToAR(navigatorType) {
-    return () => {
-      this.setState({
-        navigatorType: AR_NAVIGATOR_TYPE
-      });
-    };
-  }
-
-  // This function "exits" Viro by setting the navigatorType to UNSET.
-  _exitViro() {
-    this.setState({
-      navigatorType: UNSET
-    });
-  }
+	// This function "exits" Viro by setting the navigatorType to UNSET.
+	_exitViro() {
+		this.setState({
+			navigatorType: UNSET
+		})
+	}
 }
 
 var localStyles = StyleSheet.create({
