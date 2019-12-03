@@ -13,6 +13,8 @@ export default class PlotNode extends Component {
 			animateSeeds: false,
 			clickable: true
 		}
+		this._onClick = this._onClick.bind(this)
+		this._onHover = this._onHover.bind(this)
 	}
 
 	_onClick(plot) {

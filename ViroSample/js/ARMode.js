@@ -37,19 +37,19 @@ class ARMode extends Component {
 			loaded: false,
 			error: null,
 			plots: [],
-			anchorsFound: [],
-			waterablePlot: null,
-			seedablePlot: null,
-			pickablePlot: null,
-			animateSeeds: false,
-			clickable: true
+			anchorsFound: []
+			// waterablePlot: null,
+			// seedablePlot: null,
+			// pickablePlot: null,
+			// animateSeeds: false,
+			// clickable: true
 		}
 		this._onInitialized = this._onInitialized.bind(this)
 		this._getARCoords = this._getARCoords.bind(this)
 		this._onSelected = this._onSelected.bind(this)
 		this._onAnchorFound = this._onAnchorFound.bind(this)
-		this._onHover = this._onHover.bind(this)
-		this._onClick = this._onClick.bind(this)
+		// this._onHover = this._onHover.bind(this)
+		// this._onClick = this._onClick.bind(this)
 	}
 
 	async componentDidMount() {
@@ -89,27 +89,27 @@ class ARMode extends Component {
 		return [plotARX, y, -plotARZ]
 	}
 
-	_onHover(anchor) {
-		const plot = this._plotHere(anchor)
-		const that = this
-		return function(isHovering) {
-			if (isHovering) {
-				console.log("hovering on:", plot)
-				that.setState({
-					waterablePlot:
-						plot.datePlanted && !plot.ripe && !plot.watered ? plot : null,
-					seedablePlot: !plot.datePlanted ? plot : null,
-					pickablePlot: plot.ripe ? plot : null
-				})
-			} else {
-				that.setState({
-					waterablePlot: null,
-					seedablePlot: null,
-					pickablePlot: null
-				})
-			}
-		}
-	}
+	// _onHover(anchor) {
+	// 	const plot = this._plotHere(anchor)
+	// 	const that = this
+	// 	return function(isHovering) {
+	// 		if (isHovering) {
+	// 			console.log("hovering on:", plot)
+	// 			that.setState({
+	// 				waterablePlot:
+	// 					plot.datePlanted && !plot.ripe && !plot.watered ? plot : null,
+	// 				seedablePlot: !plot.datePlanted ? plot : null,
+	// 				pickablePlot: plot.ripe ? plot : null
+	// 			})
+	// 		} else {
+	// 			that.setState({
+	// 				waterablePlot: null,
+	// 				seedablePlot: null,
+	// 				pickablePlot: null
+	// 			})
+	// 		}
+	// 	}
+	// }
 
 	async _onSelected(anchor) {
 		const { lat, lng } = this._mercToLatLong(anchor.center[2], anchor.center[0])
@@ -137,43 +137,43 @@ class ARMode extends Component {
 		}
 	}
 
-	_getPlotButton(plot) {
-		if (this.state.waterablePlot === plot) return ["waterButton"]
-		else if (this.state.seedablePlot === plot) return ["seedButton"]
-		else if (this.state.pickablePlot === plot) return ["pickButton"]
-		return ["frontMaterial"]
-	}
+	// _getPlotButton(plot) {
+	// 	if (this.state.waterablePlot === plot) return ["waterButton"]
+	// 	else if (this.state.seedablePlot === plot) return ["seedButton"]
+	// 	else if (this.state.pickablePlot === plot) return ["pickButton"]
+	// 	return ["frontMaterial"]
+	// }
 
-	_onClick(plot) {
-		if (
-			this.state.clickable &&
-			[
-				this.state.seedablePlot,
-				this.state.waterablePlot,
-				this.state.pickablePlot
-			].includes(plot)
-		) {
-			if (this.state.seedablePlot === plot) {
-				this.props.seedPlot(plot, this.props.seed)
-				Vibration.vibrate()
-				Vibration.cancel()
-				this.setState({ animateSeeds: true })
-				// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
-			} else if (this.state.waterablePlot === plot) {
-				this.props.waterPlot(plot)
-				Vibration.vibrate()
-				Vibration.cancel()
-			} else if (this.state.pickablePlot === plot) {
-				this.props.pickPlot(plot)
-				Vibration.vibrate()
-				Vibration.cancel()
-			}
-			this.setState({ clickable: false })
-			setTimeout(() => {
-				this.setState({ clickable: true })
-			}, 3000)
-		}
-	}
+	// _onClick(plot) {
+	// 	if (
+	// 		this.state.clickable &&
+	// 		[
+	// 			this.state.seedablePlot,
+	// 			this.state.waterablePlot,
+	// 			this.state.pickablePlot
+	// 		].includes(plot)
+	// 	) {
+	// 		if (this.state.seedablePlot === plot) {
+	// 			this.props.seedPlot(plot, this.props.seed)
+	// 			Vibration.vibrate()
+	// 			Vibration.cancel()
+	// 			this.setState({ animateSeeds: true })
+	// 			// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
+	// 		} else if (this.state.waterablePlot === plot) {
+	// 			this.props.waterPlot(plot)
+	// 			Vibration.vibrate()
+	// 			Vibration.cancel()
+	// 		} else if (this.state.pickablePlot === plot) {
+	// 			this.props.pickPlot(plot)
+	// 			Vibration.vibrate()
+	// 			Vibration.cancel()
+	// 		}
+	// 		this.setState({ clickable: false })
+	// 		setTimeout(() => {
+	// 			this.setState({ clickable: true })
+	// 		}, 3000)
+	// 	}
+	// }
 
 	render() {
 		let hoeSelected = true
