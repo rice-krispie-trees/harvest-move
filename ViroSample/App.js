@@ -19,7 +19,7 @@ import {
   TouchableHighlight
 } from "react-native";
 import { Router, Scene, Stack } from "react-native-router-flux";
-import { Login, Home, CropMap, AR } from "./js";
+import { Login, Home, CropMap, AR, Market } from "./js";
 import configureStore from "./store";
 
 import { firebaseConfig } from "./firebase/config";
@@ -61,6 +61,7 @@ class ViroSample extends Component {
 						key="ar"
 						component={AR}
 					/>
+					<Scene key="market" component={Market} title="Harvest Market"/>
 				</Stack>
 			</Router>
 		</Provider>
@@ -131,3 +132,4 @@ var localStyles = StyleSheet.create({
 });
 
 module.exports = ViroSample;
+
