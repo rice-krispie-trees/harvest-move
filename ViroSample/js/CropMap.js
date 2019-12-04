@@ -30,7 +30,7 @@ export default class CropMap extends Component {
   }
 
   async componentDidMount() {
-    navigator.geolocation.getCurrentPosition(
+    navigator.geolocation.watchPosition(
       position => {
         this.setState({
           location: {

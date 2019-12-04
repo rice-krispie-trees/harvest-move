@@ -1,7 +1,7 @@
 import React from "react"
-import { View, Text, StyleSheet, Image, TouchableOpacity, } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, } from "react-native"
 import { Actions } from "react-native-router-flux"
-import { Card, Button } from "react-native-elements"
+import { Card } from "react-native-elements"
 import { connect } from "react-redux"
 import { getUserCoords } from "../store/redux/coords"
 
@@ -17,6 +17,7 @@ export default connect(
 		render() {
 		return (
 				<View style={styles.container}>
+					<ScrollView>
 					<TouchableOpacity
 						onPress={()=> Actions.ar()}
 						style={styles.button}>
@@ -55,6 +56,7 @@ export default connect(
 						<Text style={styles.text}>HARVEST MARKET</Text>
 					</Card>
 					</TouchableOpacity>
+					</ScrollView>
 				</View>
 			)
 		}
