@@ -19,10 +19,8 @@ import {
   TouchableHighlight
 } from "react-native";
 import { Router, Scene, Stack } from "react-native-router-flux";
-import { Login, Home, CropMap, ARMode, AR } from "./js";
+import { Login, Home, CropMap, AR } from "./js";
 import configureStore from "./store";
-
-import { ViroARSceneNavigator } from "react-viro";
 
 import { firebaseConfig } from "./firebase/config";
 import { FirebaseWrapper } from "./firebase/firebase";
@@ -42,25 +40,11 @@ class ViroSample extends Component {
 		this.state = {
 			sharedProps: sharedProps
 		}
-		//this._NonARRoot = this._NonARRoot.bind(this)
-		this._getARNavigator = this._getARNavigator.bind(this)
-		this._goToAR = this._goToAR.bind(this)
 		this._exitViro = this._exitViro.bind(this)
 	}
 
-	// Replace this function with the contents of _getVRNavigator() or _getARNavigator()
-	// if you are building a specific type of experience.
 	render() {
 		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-		// 	if (this.state.navigatorType == UNSET) {
-		// 		return this._NonARRoot()
-		// 	} else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
-		// 		return this._getARNavigator()
-		// 	}
-		// }
-
-		// Presents the user with a choice of an AR or VR experience
-		//_NonARRoot() {
 		return (
 		<Provider store={store}>
 			<Router navigationBarStyle={{ backgroundColor: '#F8C752' }}
@@ -81,27 +65,6 @@ class ViroSample extends Component {
 			</Router>
 		</Provider>
 		)
-	}
-
-
-	// Returns the ViroARSceneNavigator which will start the AR experience
-	_getARNavigator() {
-		return (
-			<ViroARSceneNavigator
-				{...this.state.sharedProps}
-				initialScene={{ scene: InitialARScene }}
-			/>
-		)
-	}
-
-	// This function returns an anonymous/lambda function to be used
-	// by the experience selector buttons
-	_goToAR(navigatorType) {
-		return () => {
-			this.setState({
-				navigatorType: AR_NAVIGATOR_TYPE
-			})
-		}
 	}
 
 	// This function "exits" Viro by setting the navigatorType to UNSET.
