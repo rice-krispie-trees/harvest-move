@@ -8,8 +8,7 @@ import {
 	ViroARScene,
 	ViroConstants,
 	ViroMaterials,
-	ViroARPlaneSelector,
-	ViroAmbientLight
+	ViroARPlaneSelector
 } from "react-viro"
 
 import { PLOT_WIDTH, PLOT_LENGTH } from "./constants"
@@ -54,6 +53,8 @@ class ARMode extends Component {
 	}
 
 	_getARCoords(plot, y) {
+		console.log(this.props.plots)
+		console.log(this.state.plotAnchorMap)
 		const plotMerc = this._latLongToMerc(
 			plot.coordinates.latitude,
 			plot.coordinates.longitude
@@ -98,16 +99,14 @@ class ARMode extends Component {
 		}
 	}
 
-	_mapAnchorsFound(callback) {
-		const container = []
-		for (let key in this.state.plotAnchorMap) {
-			container.push(callback(this.state.plotAnchorMap[key]))
-		}
-		return container
+	_plotsWithAnchors() {
+		// for (let key in this.state.plotAnchorMap) {
+		// 	container.push(callback(this.state.plotAnchorMap[key]))
+		// }
+		return this.props.plots.filter(plot => this.state.plotAnchorMap[plot.id])
 	}
 
 	render() {
-		let hoeSelected = true
 		return (
 			<ViroARScene
 				onTrackingUpdated={this._onInitialized}
@@ -115,26 +114,23 @@ class ARMode extends Component {
 				onAnchorFound={this._onAnchorFound}
 				style={{ flex: 1 }}
 			>
+				{this._plotsWithAnchors().map(plot => (
+					<PlotNode
+						position={this._getARCoords(
+							plot,
+							this.state.plotAnchorMap[plot.id].position[1]
+						)}
+						plot={plot}
+					/>
+				))}
 				{this.props.plots.map(plot => (
 					<HoverBox position={this._getARCoords(plot, 0)} />
 				))}
-				{this._mapAnchorsFound(anchor => (
-					<PlotNode
-						position={this._getARCoords(
-							this._plotHere(anchor),
-							anchor.position[1]
-						)}
-						plot={this._plotHere(anchor)}
-					/>
-				))}
-				<ViroAmbientLight color="#FFFFFF" />
-				{hoeSelected ? (
+				{this.props.hoe && (
 					<ViroARPlaneSelector
 						alignment="Horizontal"
 						onPlaneSelected={this._onSelected}
 					/>
-				) : (
-					""
 				)}
 			</ViroARScene>
 		)
@@ -154,6 +150,9 @@ class ARMode extends Component {
 ViroMaterials.createMaterials({
 	dirt: {
 		diffuseTexture: require("./res/plot_base.png")
+	},
+	seededPlot: {
+		diffuseTexture: require("./res/seeded_plot.png")
 	},
 	waterButton: {
 		diffuseColor: "#03c6fc"
@@ -176,7 +175,12 @@ ViroMaterials.createMaterials({
 })
 
 module.exports = connect(
-	state => ({ plots: state.plots, coords: state.coords, seed: state.seed }),
+	state => ({
+		plots: state.plots,
+		coords: state.coords,
+		seed: state.seed,
+		hoe: state.hoe
+	}),
 	dispatch => ({
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
 		makeNewPlot: (lat, lng) => dispatch(makeNewPlot(lat, lng))
