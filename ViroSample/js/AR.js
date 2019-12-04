@@ -5,10 +5,18 @@ import { connect } from "react-redux"
 import crops from "./logic/crops"
 import InnerAR from "./InnerAR"
 import { seedTypePicked } from "../store/redux/seed"
+import { toggleHoe } from "../store/redux/hoe"
 
-module.exports = connect(null, dispatch => ({
-	seedTypePicked: seed => dispatch(seedTypePicked(seed))
-}))(
+module.exports = connect(
+	state => ({
+		seed: state.seed,
+		hoe: state.hoe
+	}),
+	dispatch => ({
+		seedTypePicked: seed => dispatch(seedTypePicked(seed)),
+		toggleHoe: () => dispatch(toggleHoe())
+	})
+)(
 	class extends React.Component {
 		constructor(props) {
 			super(props)
@@ -22,17 +30,24 @@ module.exports = connect(null, dispatch => ({
 				<View style={styles.ARContainer}>
 					<InnerAR />
 					<View style={styles.buttonContainer}>
-						{/* <Button title="button" /> */}
 						<SegmentedControlIOS
 							style={styles.buttonBar}
-							values={Object.keys(crops)}
-							selectedIndex={this.props.seed}
-							onChange={event => {
-								this.props.seedTypePicked(
-									Object.keys(crops)[event.nativeEvent.selectedSegmentIndex]
-								)
-							}}
+							values={["Work your plots", "Till new plots"]}
+							selectedIndex={+this.props.hoe}
+							onChange={() => this.props.toggleHoe()}
 						/>
+						{!this.props.hoe && (
+							<SegmentedControlIOS
+								style={styles.buttonBar}
+								values={Object.keys(crops)}
+								selectedIndex={this.props.seed}
+								onChange={event => {
+									this.props.seedTypePicked(
+										Object.keys(crops)[event.nativeEvent.selectedSegmentIndex]
+									)
+								}}
+							/>
+						)}
 					</View>
 				</View>
 			)
