@@ -3,6 +3,8 @@ import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { Actions } from "react-native-router-flux";
 import { loginUser } from "../store/redux/auth";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input } from 'react-native-elements';
 
 class Login extends Component {
   constructor(props) {
@@ -41,8 +43,6 @@ class Login extends Component {
     } else {
       return (
         <View>
-          <Text>Welcome to HarvestMove</Text>
-          <View>
             <TextInput
               onChange={this.handleEmailChange}
               onChangeText={text => this.setState({ email: text })}
@@ -61,7 +61,6 @@ class Login extends Component {
               title="Sign In"
               onPress={() => this.handleSubmit()}
             />
-          </View>
         </View>
       );
     }
