@@ -57,9 +57,7 @@ class ViroSample extends Component {
 						component={CropMap}
 						title="My Map"
 					/>
-					<Scene
-						key="ar"
-						component={AR}
+					<Scene key="ar" component={AR}
 					/>
 					<Scene key="market" component={Market} title="Harvest Market"/>
 				</Stack>
