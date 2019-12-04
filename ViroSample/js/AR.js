@@ -40,7 +40,7 @@ module.exports = connect(
 							<SegmentedControlIOS
 								style={styles.buttonBar}
 								values={Object.keys(crops)}
-								selectedIndex={this.props.seed}
+								selectedIndex={Object.keys(crops).indexOf(this.props.seed)}
 								onChange={event => {
 									this.props.seedTypePicked(
 										Object.keys(crops)[event.nativeEvent.selectedSegmentIndex]

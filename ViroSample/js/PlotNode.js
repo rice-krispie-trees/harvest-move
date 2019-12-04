@@ -3,7 +3,6 @@ import {
 	PLOT_HEIGHT,
 	PLOT_LENGTH,
 	PLOT_WIDTH,
-	MARKER_RADIUS,
 	PLOT_BORDER_WIDTH
 } from "./constants"
 import { ViroNode, ViroMaterials, ViroSphere, ViroBox } from "react-viro"
