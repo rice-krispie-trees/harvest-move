@@ -8,7 +8,7 @@ import {
 import { ViroNode, ViroMaterials, ViroSphere, ViroBox } from "react-viro"
 import { Vibration } from "react-native"
 import { connect } from "react-redux"
-import { Particles } from "./"
+import { Seeds, Droplets } from "./"
 import { waterPlot, seedPlot, pickPlot } from "../store/redux/plots"
 
 export default connect(
@@ -26,7 +26,8 @@ export default connect(
 				waterablePlot: null,
 				seedablePlot: null,
 				pickablePlot: null,
-				animateSeeds: false,
+				animateSeeds: null,
+				animateDroplets: null,
 				clickable: true
 			}
 			this._onClick = this._onClick.bind(this)
@@ -39,12 +40,14 @@ export default connect(
 					this.props.seedPlot(plot, this.props.seed)
 					Vibration.vibrate()
 					Vibration.cancel()
-					this.setState({ animateSeeds: true })
-					// setTimeout(() => this.setState({ animateSeeds: false }), 1000)
+					this.setState({ animateSeeds: plot.id })
+					setTimeout(() => this.setState({ animateSeeds: null }), 1000)
 				} else if (this._isWaterable(plot)) {
 					this.props.waterPlot(plot)
 					Vibration.vibrate()
 					Vibration.cancel()
+					this.setState({ animateDroplets: plot.id })
+					setTimeout(() => this.setState({ animateDroplets: null }), 1000)
 				} else if (this._isPickable(plot)) {
 					this.props.pickPlot(plot)
 					Vibration.vibrate()
@@ -100,6 +103,14 @@ export default connect(
 			return plot.ripe
 		}
 
+		_isActionable(plot) {
+			return (
+				this._isWaterable(plot) ||
+				this._isSeedable(plot) ||
+				this._isPickable(plot)
+			)
+		}
+
 		_onHover(plot) {
 			const that = this
 			return function(isHovering) {
@@ -128,19 +139,24 @@ export default connect(
 			return ["frontMaterial"]
 		}
 
+		_getPlotTexture(plot) {
+			if (plot.datePlanted) return ["seededPlot"]
+			return ["dirt"]
+		}
+
 		render() {
 			return (
 				<ViroNode position={this.props.position}>
-					<Particles
-						seedablePlot={this.state.seedablePlot}
-						animate={this.state.animateSeeds}
+					<Seeds animate={this.state.animateSeeds === this.props.plot.id} />
+					<Droplets
+						animate={this.state.animateDroplets === this.props.plot.id}
 					/>
 					<ViroBox
 						onClick={() => this._onClick(this.props.plot)}
 						height={PLOT_HEIGHT}
 						width={PLOT_WIDTH}
 						length={PLOT_LENGTH}
-						materials={["dirt"]}
+						materials={this._getPlotTexture(this.props.plot)}
 						position={[0, 0, 0]}
 					/>
 					<ViroBox
@@ -148,7 +164,8 @@ export default connect(
 						width={PLOT_WIDTH + PLOT_BORDER_WIDTH}
 						length={PLOT_LENGTH + PLOT_BORDER_WIDTH}
 						materials={this._getPlotButton(this.props.plot)}
-						position={[0, -0.05, 0]}
+						visible={this._isActionable(this.props.plot)}
+						position={[0, -0.0005, 0]}
 					/>
 				</ViroNode>
 			)
