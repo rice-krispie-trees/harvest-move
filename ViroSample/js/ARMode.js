@@ -151,6 +151,9 @@ ViroMaterials.createMaterials({
 	dirt: {
 		diffuseTexture: require("./res/plot_base.png")
 	},
+	seededPlot: {
+		diffuseTexture: require("./res/seeded_plot.png")
+	},
 	waterButton: {
 		diffuseColor: "#03c6fc"
 	},
