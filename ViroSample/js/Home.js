@@ -2,12 +2,6 @@ import React from "react"
 import { View, Text, StyleSheet, Image, TouchableOpacity, } from "react-native"
 import { Actions } from "react-native-router-flux"
 import { Card, Button } from "react-native-elements"
-// import {
-// 	Container,
-// 	Content,
-// 	Card,
-// 	CardItem,
-// } from "native-base"
 import { connect } from "react-redux"
 import { getUserCoords } from "../store/redux/coords"
 
