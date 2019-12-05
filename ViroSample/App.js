@@ -34,44 +34,41 @@ var sharedProps = {
 };
 
 class ViroSample extends Component {
-	constructor() {
-		super()
+  constructor() {
+    super();
 
-		this.state = {
-			sharedProps: sharedProps
-		}
-		this._exitViro = this._exitViro.bind(this)
-	}
+    this.state = {
+      sharedProps: sharedProps
+    };
+    this._exitViro = this._exitViro.bind(this);
+  }
 
-	render() {
-		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-		return (
-		<Provider store={store}>
-			<Router navigationBarStyle={{ backgroundColor: '#F8C752' }}
-				titleStyle={{ color: "rgba(255,255,255,1)" }}>
-				<Stack key="root">
-					{/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
-					<Scene key="home" component={Home} title="Harvest Move" />
-					<Scene
-						key="map"
-						component={CropMap}
-						title="My Map"
-					/>
-					<Scene key="ar" component={AR}
-					/>
-					<Scene key="market" component={Market} title="Harvest Market"/>
-				</Stack>
-			</Router>
-		</Provider>
-		)
-	}
+  render() {
+    FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
+    return (
+      <Provider store={store}>
+        <Router
+          navigationBarStyle={{ backgroundColor: "#F8C752" }}
+          titleStyle={{ color: "rgba(255,255,255,1)" }}
+        >
+          <Stack key="root">
+            {/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
+            <Scene key="market" component={Market} title="Harvest Market" />
+            <Scene key="home" component={Home} title="Harvest Move Home" />
+            <Scene key="map" component={CropMap} title="My Map" />
+            <Scene key="ar" component={AR} />
+          </Stack>
+        </Router>
+      </Provider>
+    );
+  }
 
-	// This function "exits" Viro by setting the navigatorType to UNSET.
-	_exitViro() {
-		this.setState({
-			navigatorType: UNSET
-		})
-	}
+  // This function "exits" Viro by setting the navigatorType to UNSET.
+  _exitViro() {
+    this.setState({
+      navigatorType: UNSET
+    });
+  }
 }
 
 var localStyles = StyleSheet.create({
@@ -130,4 +127,3 @@ var localStyles = StyleSheet.create({
 });
 
 module.exports = ViroSample;
-
