@@ -3,7 +3,6 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { HoverBox, PlotNode } from "./"
-
 import {
 	ViroARScene,
 	ViroConstants,
@@ -100,9 +99,6 @@ class ARMode extends Component {
 	}
 
 	_plotsWithAnchors() {
-		// for (let key in this.state.plotAnchorMap) {
-		// 	container.push(callback(this.state.plotAnchorMap[key]))
-		// }
 		return this.props.plots.filter(plot => this.state.plotAnchorMap[plot.id])
 	}
 

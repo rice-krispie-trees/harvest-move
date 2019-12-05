@@ -5,17 +5,6 @@ import firebasePath from "../firebase_path"
 import { GeoFirestore } from "geofirestore"
 import { hasDied, hasDried, hasRipened, hasSprouted } from "../js/logic"
 
-// const getNewDocId = async collectionPath => {
-//   const docIdRef = await firebase
-//     .firestore()
-//     .collection("Counters")
-//     .doc(collectionPath);
-//   const newDocIdRef = await docIdRef.update({
-//     counter: firebase.firestore.FieldValue.increment(1)
-//   });
-//   return newDocIdRef;
-// };
-
 export class FirebaseWrapper {
 	constructor() {
 		this.initialized = false

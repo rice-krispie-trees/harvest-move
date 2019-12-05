@@ -1,6 +1,5 @@
-import React, { Component } from "react"
-import { View, SegmentedControlIOS, StyleSheet, Button } from "react-native"
-import { ViroARSceneNavigator } from "react-viro"
+import React from "react"
+import { View, SegmentedControlIOS, StyleSheet, Dimensions } from "react-native"
 import { connect } from "react-redux"
 import crops from "./logic/crops"
 import InnerAR from "./InnerAR"
@@ -69,6 +68,6 @@ var styles = StyleSheet.create({
 		top: 0
 	},
 	buttonBar: {
-		width: 320
+		width: Dimensions.get("window").width
 	}
 })
