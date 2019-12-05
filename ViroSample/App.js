@@ -19,7 +19,7 @@ import {
   TouchableHighlight
 } from "react-native";
 import { Router, Scene, Stack } from "react-native-router-flux";
-import { Login, Home, CropMap, AR } from "./js";
+import { Login, Home, CropMap, AR, Basket } from "./js";
 import configureStore from "./store";
 
 import { firebaseConfig } from "./firebase/config";
@@ -34,45 +34,50 @@ var sharedProps = {
 };
 
 class ViroSample extends Component {
-	constructor() {
-		super()
+  constructor() {
+    super()
 
-		this.state = {
-			sharedProps: sharedProps
-		}
-		this._exitViro = this._exitViro.bind(this)
-	}
+    this.state = {
+      sharedProps: sharedProps
+    }
+    this._exitViro = this._exitViro.bind(this)
+  }
 
-	render() {
-		FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
-		return (
-		<Provider store={store}>
-			<Router navigationBarStyle={{ backgroundColor: '#F8C752' }}
-				titleStyle={{ color: "rgba(255,255,255,1)" }}>
-				<Stack key="root">
-					{/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
-					<Scene key="home" component={Home} title="Harvest Move" />
-					<Scene
-						key="map"
-						component={CropMap}
-						title="My Map"
-					/>
-					<Scene
-						key="ar"
-						component={AR}
-					/>
-				</Stack>
-			</Router>
-		</Provider>
-		)
-	}
+  render() {
+    FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
+    return (
+      <Provider store={store}>
+        <Router navigationBarStyle={{ backgroundColor: '#F8C752' }}
+          titleStyle={{ color: "rgba(255,255,255,1)" }}>
+          <Stack key="root">
+            {/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
+            <Scene key="home" component={Home} title="Harvest Move" />
+            <Scene
+              key="map"
+              component={CropMap}
+              title="My Map"
+            />
+            <Scene
+              key="ar"
+              component={AR}
+            />
+            <Scene
+              key="basket"
+              component={Basket}
+              title="My Basket"
+            />
+          </Stack>
+        </Router>
+      </Provider>
+    )
+  }
 
-	// This function "exits" Viro by setting the navigatorType to UNSET.
-	_exitViro() {
-		this.setState({
-			navigatorType: UNSET
-		})
-	}
+  // This function "exits" Viro by setting the navigatorType to UNSET.
+  _exitViro() {
+    this.setState({
+      navigatorType: UNSET
+    })
+  }
 }
 
 var localStyles = StyleSheet.create({
