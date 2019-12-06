@@ -5,6 +5,7 @@ import crops from "./logic/crops"
 import InnerAR from "./InnerAR"
 import { seedTypePicked } from "../store/redux/seed"
 import { toggleHoe } from "../store/redux/hoe"
+import { TOOLS } from "./constants"
 
 module.exports = connect(
 	state => ({
@@ -31,7 +32,7 @@ module.exports = connect(
 					<View style={styles.buttonContainer}>
 						<SegmentedControlIOS
 							style={styles.buttonBar}
-							values={["Work your plots", "Till new plots"]}
+							values={TOOLS}
 							selectedIndex={+this.props.hoe}
 							onChange={() => this.props.toggleHoe()}
 						/>

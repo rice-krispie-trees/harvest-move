@@ -145,10 +145,19 @@ class ARMode extends Component {
 
 ViroMaterials.createMaterials({
 	dirt: {
-		diffuseTexture: require("./res/plot_base.png")
+		diffuseTexture: require("./res/empty_plot.png")
 	},
-	seededPlot: {
-		diffuseTexture: require("./res/seeded_plot.png")
+	seededPlotDry: {
+		diffuseTexture: require("./res/seed_dry.png")
+	},
+	seededPlotWatered: {
+		diffuseTexture: require("./res/seed_watered.png")
+	},
+	sproutedPlotDry: {
+		diffuseTexture: require("./res/sprout_dry.png")
+	},
+	sproutedPlotWatered: {
+		diffuseTexture: require("./res/sprout_watered.png")
 	},
 	waterButton: {
 		diffuseColor: "#03c6fc"

@@ -140,7 +140,12 @@ export default connect(
 		}
 
 		_getPlotTexture(plot) {
-			if (plot.datePlanted) return ["seededPlot"]
+			if (!plot.datePlanted) return ["dirt"]
+			if (!plot.sprouted && !plot.ripe && !plot.watered)
+				return ["seededPlotDry"]
+			if (!plot.ripe && !plot.watered) return ["sproutedPlotDry"]
+			if (!plot.sprouted && !plot.ripe) return ["seededPlotWatered"]
+			if (!plot.ripe) return ["sproutedPlotWatered"]
 			return ["dirt"]
 		}
 
