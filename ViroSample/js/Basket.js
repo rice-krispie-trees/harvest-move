@@ -6,30 +6,26 @@ export default class Basket extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: []
+      plots: []
     };
 
   }
 
   async componentDidMount() {
-    await FirebaseWrapper.GetInstance().SetupCollectionListener(
-      "users",
-      users => this.setState({ users })
+    await FirebaseWrapper.GetInstance().getAllUserPlots(
+      plots => this.setState({ plots })
     );
   }
 
   render() {
-    let x = this.state.users[0]
     return (
       <View style={styles.container}>
         <Text style={{ fontWeight: 'bold' }}>Your basket includes:</Text>
         <Text>{`\u2022 Item #1 Ex.`}</Text>
         <Text>{`\u2022 Item #2 Ex.`}</Text>
-        {/* {this.state.users.map(user => {
-          if (user.email) {
-            return (<Text>HAS EMAIL</Text>)
-          }
-        })}; */}
+        {this.state.plots && this.state.plots.map(plot => {
+          if (plot.d.alive) return <Text key={plot.d.id}>This crop is: {plot.d.crop}</Text>
+        })}
       </View>
     );
   }

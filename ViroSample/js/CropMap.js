@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, Button, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { FirebaseWrapper } from "../firebase/firebase";
+import { Actions } from "react-native-router-flux"
 // import { createStackNavigator, createBottomTabNavigator, navigate } from 'react-navigation';
 
 export default class CropMap extends Component {
@@ -88,7 +89,8 @@ export default class CropMap extends Component {
         <Marker
           coordinate={this.state.location}
           pinColor="#2FB906"
-          onPress={() => this.props.navigation.navigate("Home")}
+          // onPress={() => this.props.navigation.navigate("Home")}
+          onPress={() => Actions.ar()}
         />
         {this.state.plots.map(plot => {
           return (
