@@ -4,17 +4,17 @@ import { connect } from "react-redux"
 import crops from "./logic/crops"
 import InnerAR from "./InnerAR"
 import { seedTypePicked } from "../store/redux/seed"
-import { toggleHoe } from "../store/redux/hoe"
-import { TOOLS } from "./constants"
+import { selectedTool } from "../store/redux/tool"
+import { TOOLS, SEEDS } from "./constants"
 
 module.exports = connect(
 	state => ({
 		seed: state.seed,
-		hoe: state.hoe
+		tool: state.tool
 	}),
 	dispatch => ({
 		seedTypePicked: seed => dispatch(seedTypePicked(seed)),
-		toggleHoe: () => dispatch(toggleHoe())
+		selectedTool: tool => dispatch(selectedTool(tool))
 	})
 )(
 	class extends React.Component {
@@ -33,10 +33,14 @@ module.exports = connect(
 						<SegmentedControlIOS
 							style={styles.buttonBar}
 							values={TOOLS}
-							selectedIndex={+this.props.hoe}
-							onChange={() => this.props.toggleHoe()}
+							selectedIndex={TOOLS.indexOf(this.props.tool)}
+							onChange={event =>
+								this.props.selectedTool(
+									TOOLS[event.nativeEvent.selectedSegmentIndex]
+								)
+							}
 						/>
-						{!this.props.hoe && (
+						{this.props.tool === SEEDS && (
 							<SegmentedControlIOS
 								style={styles.buttonBar}
 								values={Object.keys(crops)}

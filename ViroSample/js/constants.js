@@ -8,4 +8,10 @@ export const MARKER_RADIUS = PLOT_WIDTH / 10
 
 export const HOVER_BOX_SIDE = 0.05
 
-export const TOOLS = ["Hoe", "Seed Bag", "Watering Can", "Picker", "Wand"]
+export const HOE = "Hoe"
+export const SEEDS = "Seed Bag"
+export const WATER = "Watering Can"
+export const PICK = "Picker"
+export const WAND = "Wand"
+
+export const TOOLS = [HOE, SEEDS, WATER, PICK, WAND]

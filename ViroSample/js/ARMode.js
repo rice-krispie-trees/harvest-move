@@ -10,7 +10,7 @@ import {
 	ViroARPlaneSelector
 } from "react-viro"
 
-import { PLOT_WIDTH, PLOT_LENGTH } from "./constants"
+import { PLOT_WIDTH, PLOT_LENGTH, HOE } from "./constants"
 import { getAllPlots, makeNewPlot } from "../store/redux/plots"
 
 class ARMode extends Component {
@@ -122,7 +122,7 @@ class ARMode extends Component {
 				{this.props.plots.map(plot => (
 					<HoverBox position={this._getARCoords(plot, 0)} />
 				))}
-				{this.props.hoe && (
+				{this.props.tool === HOE && (
 					<ViroARPlaneSelector
 						alignment="Horizontal"
 						onPlaneSelected={this._onSelected}
@@ -159,6 +159,21 @@ ViroMaterials.createMaterials({
 	sproutedPlotWatered: {
 		diffuseTexture: require("./res/sprout_watered.png")
 	},
+	ripePotato: {
+		diffuseTexture: require("./res/ripe_potato.png")
+	},
+	ripeCorn: {
+		diffuseTexture: require("./res/ripe_corn.png")
+	},
+	ripeStrawberry: {
+		diffuseTexture: require("./res/ripe_tomato.png")
+	},
+	ripeWheat: {
+		diffuseTexture: require("./res/ripe_corn.png")
+	},
+	ripeCabbage: {
+		diffuseTexture: require("./res/ripe_turnip.png")
+	},
 	waterButton: {
 		diffuseColor: "#03c6fc"
 	},
@@ -184,7 +199,7 @@ module.exports = connect(
 		plots: state.plots,
 		coords: state.coords,
 		seed: state.seed,
-		hoe: state.hoe
+		tool: state.tool
 	}),
 	dispatch => ({
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),
