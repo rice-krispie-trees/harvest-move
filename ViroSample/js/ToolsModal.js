@@ -1,8 +1,7 @@
 import React from "react"
 import { View, Text, Modal, TouchableHighlight } from "react-native"
 
-export default function SeedsModal(props) {
-
+export default function ToolsModal(props) {
   return (
     <View>
       <Modal
@@ -11,7 +10,7 @@ export default function SeedsModal(props) {
         visible={props.parentState}
       >
         <View>
-          <Text>Seed Modal Is Open!</Text>
+          <Text>Tools Modal Is Open!</Text>
 
           <TouchableHighlight onPress={() => props.parentToggle(null)}>
             <Text>Close Modal</Text>
