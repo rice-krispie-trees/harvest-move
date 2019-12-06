@@ -1,5 +1,8 @@
 import { FirebaseWrapper } from "../../firebase/firebase";
 
+export const SIGNUP_REQUEST = "SIGNUP_REQUEST";
+export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
+export const SIGNUP_FAILURE = "SIGNUP_FAILURE";
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILURE = "LOGIN_FAILURE";
@@ -8,6 +11,25 @@ export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const LOGOUT_FAILURE = "LOGOUT_FAILURE";
 export const VERIFY_REQUEST = "VERIFY_REQUEST";
 export const VERIFY_SUCCESS = "VERIFY_SUCCESS";
+
+const requestSignup = () => {
+  return {
+    type: SIGNUP_REQUEST
+  };
+};
+
+const receiveSignup = user => {
+  return {
+    type: SIGNUP_SUCCESS,
+    user
+  };
+};
+
+const signupError = () => {
+  return {
+    type: SIGNUP_FAILURE
+  };
+};
 
 const requestLogin = () => {
   return {
@@ -58,6 +80,20 @@ const verifySuccess = () => {
   };
 };
 
+export const signupUser = (email, password) => async dispatch => {
+  try {
+    dispatch(requestSignup());
+    await FirebaseWrapper.GetInstance().FirebaseCreateNewUser(
+      email,
+      password,
+      user => dispatch(receiveSignup(user))
+    );
+  } catch (error) {
+    console.log("signupUser failed", error);
+    dispatch(signupError());
+  }
+};
+
 export const loginUser = (email, password) => async dispatch => {
   try {
     dispatch(requestLogin());
@@ -99,9 +135,11 @@ export const verifyAuth = () => async dispatch => {
 };
 
 const authState = {
+  isSigningUp: false,
   isLoggingIn: false,
   isLoggingOut: false,
   isVerifying: false,
+  signupError: false,
   loginError: false,
   logoutError: false,
   isAuthenticated: false,
@@ -110,6 +148,22 @@ const authState = {
 
 export default (state = authState, action) => {
   switch (action.type) {
+    case SIGNUP_REQUEST:
+      return { ...state, isSigningUp: true, signupError: false };
+    case SIGNUP_SUCCESS:
+      return {
+        ...state,
+        isSigningUp: false,
+        isAuthenticated: true,
+        user: action.user
+      };
+    case SIGNUP_FAILURE:
+      return {
+        ...state,
+        isSigningUp: false,
+        isAuthenticated: false,
+        signupError: true
+      };
     case LOGIN_REQUEST:
       return { ...state, isLoggingIn: true, loginError: false };
     case LOGIN_SUCCESS:
