@@ -12,9 +12,12 @@ export default function ProtectionModal(props) {
         <View>
           <Text>Protection Modal Is Open!</Text>
 
-          <TouchableHighlight onPress={() => props.parentToggle(null)}>
-            <Text>Close Modal</Text>
-          </TouchableHighlight>
+          <Button
+            title="Close Modal"
+            type="outline"
+            raised={true}
+            onPress={() => props.parentToggle(null)}
+          />
         </View>
       </Modal>
     </View>

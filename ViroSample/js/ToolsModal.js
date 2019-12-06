@@ -1,6 +1,9 @@
 import React from "react"
 import { View, Text, Modal, TouchableHighlight } from "react-native"
 
+
+
+
 export default function ToolsModal(props) {
   return (
     <View>
@@ -12,9 +15,12 @@ export default function ToolsModal(props) {
         <View>
           <Text>Tools Modal Is Open!</Text>
 
-          <TouchableHighlight onPress={() => props.parentToggle(null)}>
-            <Text>Close Modal</Text>
-          </TouchableHighlight>
+          <Button
+            title="Close Modal"
+            type="outline"
+            raised={true}
+            onPress={() => props.parentToggle(null)}
+          />
         </View>
       </Modal>
     </View>
