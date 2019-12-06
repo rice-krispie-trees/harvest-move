@@ -4,7 +4,6 @@ import { ViroParticleEmitter } from "react-viro"
 export default function Particles(props) {
 	return (
 		<ViroParticleEmitter
-			// position={[props.seeds ? props.coords(props.seeds) : [0, 0, -1]]}
 			position={[0, 1, 0]}
 			duration={2000}
 			run={props.animate}
@@ -15,6 +14,11 @@ export default function Particles(props) {
 			}}
 			spawnBehavior={{
 				particleLifetime: [450, 450]
+			}}
+			particleAppearance={{
+				color: {
+					initialRange: ["#8f8651", "#8f8651"]
+				}
 			}}
 			particlePhysics={{
 				velocity: {
