@@ -106,27 +106,6 @@ export default connect(
 			)
 		}
 
-		_onHover(plot) {
-			const that = this
-			return function(isHovering) {
-				if (isHovering) {
-					console.log("hovering on:", plot)
-					that.setState({
-						waterablePlot:
-							plot.datePlanted && !plot.ripe && !plot.watered ? plot : null,
-						seedablePlot: !plot.datePlanted ? plot : null,
-						pickablePlot: plot.ripe ? plot : null
-					})
-				} else {
-					that.setState({
-						waterablePlot: null,
-						seedablePlot: null,
-						pickablePlot: null
-					})
-				}
-			}
-		}
-
 		_getPlotButton(plot) {
 			if (this._isWaterable(plot)) return ["waterButton"]
 			else if (this._isSeedable(plot)) return ["seedButton"]
