@@ -59,8 +59,7 @@ export default class CropMap extends Component {
     // 	plots => this.setState({ plots })
     // );
 
-    await FirebaseWrapper.GetInstance().SetupCollectionListener(
-      "FullstackPlots",
+    await FirebaseWrapper.GetInstance().getAllUserPlots(
       plots => this.setState({ plots })
     );
   }

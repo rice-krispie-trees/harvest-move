@@ -13,18 +13,23 @@ export default class Basket extends Component {
 
   async componentDidMount() {
     await FirebaseWrapper.GetInstance().SetupCollectionListener(
-      "Users",
+      "users",
       users => this.setState({ users })
     );
   }
 
   render() {
+    let x = this.state.users[0]
     return (
       <View style={styles.container}>
         <Text style={{ fontWeight: 'bold' }}>Your basket includes:</Text>
-        {this.state.users.map(user => {
-          <Text>email</Text>
-        })};
+        <Text>{`\u2022 Item #1 Ex.`}</Text>
+        <Text>{`\u2022 Item #2 Ex.`}</Text>
+        {/* {this.state.users.map(user => {
+          if (user.email) {
+            return (<Text>HAS EMAIL</Text>)
+          }
+        })}; */}
       </View>
     );
   }
