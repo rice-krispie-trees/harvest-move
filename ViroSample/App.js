@@ -60,6 +60,7 @@ class ViroSample extends Component {
             <Scene key="home" component={Home} title="Harvest Move" />
             <Scene key="map" component={CropMap} title="My Map" />
             <Scene key="ar" component={AR} />
+            <Scene key="basket" component={Basket} />
           </Stack>
         </Router>
       </Provider>
@@ -70,11 +71,7 @@ class ViroSample extends Component {
   _exitViro() {
     this.setState({
       navigatorType: UNSET
-<<<<<<< HEAD
-    })
-=======
     });
->>>>>>> e3dbe8908de0c2b83c5037c49972f22a2c689fc1
   }
 }
 
