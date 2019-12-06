@@ -16,7 +16,8 @@ export default function SeedsModal(props) {
           <ScrollView>
           <View>
             <Text>Select Seeds to Buy!</Text>
-            {crops.map(crop => {
+            {
+            crops.map(crop => {
               return (
                 <Card
                   key={crop.name}
