@@ -35,48 +35,46 @@ var sharedProps = {
 
 class ViroSample extends Component {
   constructor() {
-    super()
+    super();
 
     this.state = {
       sharedProps: sharedProps
-    }
-    this._exitViro = this._exitViro.bind(this)
+    };
+    this._exitViro = this._exitViro.bind(this);
   }
 
   render() {
-    FirebaseWrapper.GetInstance().Initialize(firebaseConfig)
+    FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
     return (
       <Provider store={store}>
-        <Router navigationBarStyle={{ backgroundColor: '#F8C752' }}
-          titleStyle={{ color: "rgba(255,255,255,1)" }}>
+        <Router
+          navigationBarStyle={{ backgroundColor: "#F8C752" }}
+          titleStyle={{ color: "rgba(255,255,255,1)" }}
+        >
           <Stack key="root">
-            {/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
+            <Scene
+              key="login"
+              component={Login}
+              title="Welcome to Harvest Move"
+            />
             <Scene key="home" component={Home} title="Harvest Move" />
-            <Scene
-              key="map"
-              component={CropMap}
-              title="My Map"
-            />
-            <Scene
-              key="ar"
-              component={AR}
-            />
-            <Scene
-              key="basket"
-              component={Basket}
-              title="My Basket"
-            />
+            <Scene key="map" component={CropMap} title="My Map" />
+            <Scene key="ar" component={AR} />
           </Stack>
         </Router>
       </Provider>
-    )
+    );
   }
 
   // This function "exits" Viro by setting the navigatorType to UNSET.
   _exitViro() {
     this.setState({
       navigatorType: UNSET
+<<<<<<< HEAD
     })
+=======
+    });
+>>>>>>> e3dbe8908de0c2b83c5037c49972f22a2c689fc1
   }
 }
 

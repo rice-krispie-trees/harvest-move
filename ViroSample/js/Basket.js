@@ -5,14 +5,16 @@ import { FirebaseWrapper } from "../firebase/firebase";
 export default class Basket extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      users: []
+    };
 
   }
 
   async componentDidMount() {
     await FirebaseWrapper.GetInstance().SetupCollectionListener(
-      "FullstackPlots",
-      plots => this.setState({ plots })
+      "Users",
+      users => this.setState({ users })
     );
   }
 
@@ -20,6 +22,9 @@ export default class Basket extends Component {
     return (
       <View style={styles.container}>
         <Text style={{ fontWeight: 'bold' }}>Your basket includes:</Text>
+        {this.state.users.map(user => {
+          <Text>email</Text>
+        })};
       </View>
     );
   }
