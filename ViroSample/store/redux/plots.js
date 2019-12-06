@@ -14,16 +14,20 @@ export const MADE_NEW_PLOT = "MADE_NEW_PLOT"
 export const WATERED_PLOT = "WATERED_PLOT"
 export const PICKED_PLOT = "PICKED_PLOT"
 export const SEEDED_PLOT = "SEEDED_PLOT"
+export const SPROUTED_PLOT = "SPROUTED_PLOT"
+export const RIPENED_PLOT = "RIPENED_PLOT"
 
 export const gotAllPlots = plots => ({ type: GOT_ALL_PLOTS, plots })
 export const madeNewPlot = plot => ({ type: MADE_NEW_PLOT, plot })
 export const wateredPlot = plot => ({ type: WATERED_PLOT, plot })
 export const seededPlot = plot => ({ type: SEEDED_PLOT, plot })
 export const pickedPlot = (plot, crop) => ({ type: PICKED_PLOT, plot, crop })
+export const sproutedPlot = plot => ({ type: SPROUTED_PLOT, plot })
+export const ripenedPlot = plot => ({ type: RIPENED_PLOT, plot })
 
 export const getAllPlots = (lat, lng) => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().getAndUpdatePlots(
+		await FirebaseWrapper.GetInstance().getAndUpdateUserPlots(
 			lat,
 			lng,
 			async plots => dispatch(gotAllPlots(plots))
@@ -46,20 +50,37 @@ export const getAllPlots = (lat, lng) => async dispatch => {
 
 export const makeNewPlot = (lat, lng) => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().createPlot(
-			firebasePath,
-			lat,
-			lng,
-			plot => dispatch(madeNewPlot(plot))
+		await FirebaseWrapper.GetInstance().createUserPlot(lat, lng, plot =>
+			dispatch(madeNewPlot(plot))
 		)
 	} catch (error) {
 		console.log("error creating plot", error)
 	}
 }
 
+export const sproutPlot = plot => async dispatch => {
+	try {
+		await FirebaseWrapper.GetInstance().sproutUserPlot(plot.id, updatedPlot =>
+			dispatch(sproutedPlot(updatedPlot))
+		)
+	} catch (error) {
+		console.log("error sprouting plot", error)
+	}
+}
+
+export const ripenPlot = plot => async dispatch => {
+	try {
+		await FirebaseWrapper.GetInstance().ripenUserPlot(plot.id, updatedPlot =>
+			dispatch(ripenedPlot(updatedPlot))
+		)
+	} catch (error) {
+		console.log("error ripening plot", error)
+	}
+}
+
 export const waterPlot = plot => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().waterPlot(plot.id, updatedPlot =>
+		await FirebaseWrapper.GetInstance().waterUserPlot(plot.id, updatedPlot =>
 			dispatch(wateredPlot(updatedPlot))
 		)
 	} catch (error) {
@@ -69,8 +90,10 @@ export const waterPlot = plot => async dispatch => {
 
 export const seedPlot = (plot, seed) => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().seedPlot(plot.id, seed, updatedPlot =>
-			dispatch(seededPlot(updatedPlot))
+		await FirebaseWrapper.GetInstance().seedUserPlot(
+			plot.id,
+			seed,
+			updatedPlot => dispatch(seededPlot(updatedPlot))
 		)
 	} catch (error) {
 		console.log("error seeding plot", error)
@@ -79,7 +102,7 @@ export const seedPlot = (plot, seed) => async dispatch => {
 
 export const pickPlot = plot => async dispatch => {
 	try {
-		await FirebaseWrapper.GetInstance().pickCrop(
+		await FirebaseWrapper.GetInstance().pickUserCrop(
 			plot.id,
 			plot.crop,
 			updatedPlot => dispatch(pickedPlot(updatedPlot, plot.crop))
@@ -108,6 +131,10 @@ export default function(state = initialState, action) {
 		case SEEDED_PLOT:
 			return replacePlot(state, action)
 		case PICKED_PLOT:
+			return replacePlot(state, action)
+		case RIPENED_PLOT:
+			return replacePlot(state, action)
+		case SPROUTED_PLOT:
 			return replacePlot(state, action)
 		default:
 			return state

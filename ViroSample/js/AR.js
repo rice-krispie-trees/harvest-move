@@ -1,20 +1,20 @@
-import React, { Component } from "react"
-import { View, SegmentedControlIOS, StyleSheet, Button } from "react-native"
-import { ViroARSceneNavigator } from "react-viro"
+import React from "react"
+import { View, SegmentedControlIOS, StyleSheet, Dimensions } from "react-native"
 import { connect } from "react-redux"
 import crops from "./logic/crops"
 import InnerAR from "./InnerAR"
 import { seedTypePicked } from "../store/redux/seed"
-import { toggleHoe } from "../store/redux/hoe"
+import { selectedTool } from "../store/redux/tool"
+import { TOOLS, SEEDS } from "./constants"
 
 module.exports = connect(
 	state => ({
 		seed: state.seed,
-		hoe: state.hoe
+		tool: state.tool
 	}),
 	dispatch => ({
 		seedTypePicked: seed => dispatch(seedTypePicked(seed)),
-		toggleHoe: () => dispatch(toggleHoe())
+		selectedTool: tool => dispatch(selectedTool(tool))
 	})
 )(
 	class extends React.Component {
@@ -32,11 +32,15 @@ module.exports = connect(
 					<View style={styles.buttonContainer}>
 						<SegmentedControlIOS
 							style={styles.buttonBar}
-							values={["Work your plots", "Till new plots"]}
-							selectedIndex={+this.props.hoe}
-							onChange={() => this.props.toggleHoe()}
+							values={TOOLS}
+							selectedIndex={TOOLS.indexOf(this.props.tool)}
+							onChange={event =>
+								this.props.selectedTool(
+									TOOLS[event.nativeEvent.selectedSegmentIndex]
+								)
+							}
 						/>
-						{!this.props.hoe && (
+						{this.props.tool === SEEDS && (
 							<SegmentedControlIOS
 								style={styles.buttonBar}
 								values={Object.keys(crops)}
@@ -69,6 +73,6 @@ var styles = StyleSheet.create({
 		top: 0
 	},
 	buttonBar: {
-		width: 320
+		width: Dimensions.get("window").width
 	}
 })

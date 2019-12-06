@@ -3,7 +3,6 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { HoverBox, PlotNode } from "./"
-
 import {
 	ViroARScene,
 	ViroConstants,
@@ -11,7 +10,7 @@ import {
 	ViroARPlaneSelector
 } from "react-viro"
 
-import { PLOT_WIDTH, PLOT_LENGTH } from "./constants"
+import { PLOT_WIDTH, PLOT_LENGTH, HOE } from "./constants"
 import { getAllPlots, makeNewPlot } from "../store/redux/plots"
 
 class ARMode extends Component {
@@ -100,9 +99,6 @@ class ARMode extends Component {
 	}
 
 	_plotsWithAnchors() {
-		// for (let key in this.state.plotAnchorMap) {
-		// 	container.push(callback(this.state.plotAnchorMap[key]))
-		// }
 		return this.props.plots.filter(plot => this.state.plotAnchorMap[plot.id])
 	}
 
@@ -126,7 +122,7 @@ class ARMode extends Component {
 				{this.props.plots.map(plot => (
 					<HoverBox position={this._getARCoords(plot, 0)} />
 				))}
-				{this.props.hoe && (
+				{this.props.tool === HOE && (
 					<ViroARPlaneSelector
 						alignment="Horizontal"
 						onPlaneSelected={this._onSelected}
@@ -149,10 +145,34 @@ class ARMode extends Component {
 
 ViroMaterials.createMaterials({
 	dirt: {
-		diffuseTexture: require("./res/plot_base.png")
+		diffuseTexture: require("./res/empty_plot.png")
 	},
-	seededPlot: {
-		diffuseTexture: require("./res/seeded_plot.png")
+	seededPlotDry: {
+		diffuseTexture: require("./res/seed_dry.png")
+	},
+	seededPlotWatered: {
+		diffuseTexture: require("./res/seed_watered.png")
+	},
+	sproutedPlotDry: {
+		diffuseTexture: require("./res/sprout_dry.png")
+	},
+	sproutedPlotWatered: {
+		diffuseTexture: require("./res/sprout_watered.png")
+	},
+	ripePotato: {
+		diffuseTexture: require("./res/ripe_potato.png")
+	},
+	ripeCorn: {
+		diffuseTexture: require("./res/ripe_corn.png")
+	},
+	ripeStrawberry: {
+		diffuseTexture: require("./res/ripe_tomato.png")
+	},
+	ripeWheat: {
+		diffuseTexture: require("./res/ripe_corn.png")
+	},
+	ripeCabbage: {
+		diffuseTexture: require("./res/ripe_turnip.png")
 	},
 	waterButton: {
 		diffuseColor: "#03c6fc"
@@ -179,7 +199,7 @@ module.exports = connect(
 		plots: state.plots,
 		coords: state.coords,
 		seed: state.seed,
-		hoe: state.hoe
+		tool: state.tool
 	}),
 	dispatch => ({
 		getAllPlots: (lat, lng) => dispatch(getAllPlots(lat, lng)),

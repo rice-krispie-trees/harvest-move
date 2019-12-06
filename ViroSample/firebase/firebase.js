@@ -4,17 +4,7 @@ import "firebase/auth"
 import firebasePath from "../firebase_path"
 import { GeoFirestore } from "geofirestore"
 import { hasDied, hasDried, hasRipened, hasSprouted } from "../js/logic"
-
-// const getNewDocId = async collectionPath => {
-//   const docIdRef = await firebase
-//     .firestore()
-//     .collection("Counters")
-//     .doc(collectionPath);
-//   const newDocIdRef = await docIdRef.update({
-//     counter: firebase.firestore.FieldValue.increment(1)
-//   });
-//   return newDocIdRef;
-// };
+import { failedGettingUserCoords } from "../store/redux/coords"
 
 export class FirebaseWrapper {
 	constructor() {
@@ -41,6 +31,17 @@ export class FirebaseWrapper {
 			this._firebaseWrapperInstance = new FirebaseWrapper()
 		}
 		return this._firebaseWrapperInstance
+	}
+
+	async FirebaseCreateNewUser(email, password, callback) {
+		try {
+			await this._auth
+				.createUserWithEmailAndPassword(email, password)
+				.then(user => callback(user))
+		} catch (error) {
+			console.error(error)
+			console.log("FirebaseCreateNewUser failed", error)
+		}
 	}
 
 	async FirebaseLoginUser(email, password, callback) {
@@ -159,6 +160,38 @@ export class FirebaseWrapper {
 		}
 	}
 
+	async createUserPlot(plotLatitude, plotLongitude, callback) {
+		try {
+			//   const docId = getNewDocId(collectionPath);
+			const user = this._auth.currentUser
+			const geofirestore = new GeoFirestore(this._firestore)
+			const geocollection = geofirestore
+				.collection("users")
+				.doc(user.uid)
+				.collection("plots")
+			const coordinates = new firebase.firestore.GeoPoint(
+				plotLatitude,
+				plotLongitude
+			)
+			const newDoc = await geocollection.add({
+				coordinates,
+				crop: null,
+				datePlanted: null,
+				ripe: false,
+				sprouted: false,
+				waterCount: 0,
+				wateredDate: null,
+				watered: false,
+				alive: false,
+				userId: user.uid
+			})
+			await newDoc.update({ id: newDoc.id })
+			await newDoc.get().then(doc => callback(doc.data()))
+		} catch (error) {
+			console.log("create plot failed", error)
+		}
+	}
+
 	async SetupCollectionListener(collectionPath, callback) {
 		try {
 			await this._firestore
@@ -174,6 +207,7 @@ export class FirebaseWrapper {
 			console.log("you didnt listen", error)
 		}
 	}
+
 	async getNearbyPlots(
 		collectionPath,
 		userLatitude,
@@ -241,6 +275,31 @@ export class FirebaseWrapper {
 		}
 	}
 
+	async sproutPlot(plotId, callback) {
+		try {
+			const ref = this._firestore.collection(firebasePath).doc(plotId)
+			await ref.update({
+				"d.sprouted": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("sproutPlot failed", error)
+		}
+	}
+
+	async ripenPlot(plotId, callback) {
+		try {
+			const ref = this._firestore.collection(firebasePath).doc(plotId)
+			await ref.update({
+				"d.ripe": true,
+				"d.sprouted": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("ripenPlot failed", error)
+		}
+	}
+
 	async pickCrop(plotId, crop, callback) {
 		try {
 			const batch = this._firestore.batch()
@@ -263,6 +322,175 @@ export class FirebaseWrapper {
 			})
 		} catch (error) {
 			console.log("pickCrop failed", error)
+		}
+	}
+
+	//Below instances are clones of the above, testing user tied plots
+
+	async seedUserPlot(plotId, seed, callback) {
+		try {
+			const user = this._auth.currentUser
+			const batch = this._firestore.batch()
+			const userRef = this._firestore.collection("users").doc(user.uid)
+			await batch.update(userRef, {
+				[`seeds.${seed}`]: firebase.firestore.FieldValue.increment(-1)
+			})
+			const plotRef = userRef.collection("plots").doc(plotId)
+			await batch.update(plotRef, {
+				"d.datePlanted": new Date(),
+				"d.alive": true,
+				"d.crop": seed
+			})
+			await batch.commit().then(async () => {
+				await plotRef.get().then(doc => callback(doc.data().d))
+			})
+		} catch (error) {
+			console.log("seedPlot failed", error)
+		}
+	}
+
+	async waterUserPlot(plotId, callback) {
+		try {
+			const user = this._auth.currentUser
+			const ref = this._firestore
+				.collection("users")
+				.doc(user.uid)
+				.collection("plots")
+				.doc(plotId)
+			await ref.update({
+				"d.waterCount": firebase.firestore.FieldValue.increment(1),
+				"d.wateredDate": new Date(),
+				"d.watered": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("waterPlot failed", error)
+		}
+	}
+
+	async sproutUserPlot(plotId, callback) {
+		try {
+			const user = this._auth.currentUser
+			const ref = this._firestore
+				.collection("users")
+				.doc(user.uid)
+				.collection("plots")
+				.doc(plotId)
+			await ref.update({
+				"d.sprouted": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("sproutPlot failed", error)
+		}
+	}
+
+	async ripenUserPlot(plotId, callback) {
+		try {
+			const user = this._auth.currentUser
+			const ref = this._firestore
+				.collection("users")
+				.doc(user.uid)
+				.collection("plots")
+				.doc(plotId)
+			await ref.update({
+				"d.sprouted": true,
+				"d.ripe": true
+			})
+			await ref.get().then(doc => callback(doc.data().d))
+		} catch (error) {
+			console.log("ripePlot failed", error)
+		}
+	}
+
+	async pickUserCrop(plotId, crop, callback) {
+		try {
+			const user = this._auth.currentUser
+			const batch = this._firestore.batch()
+			const userRef = this._firestore.collection("users").doc(user.uid)
+			await batch.update(userRef, {
+				[`crops.${crop}`]: firebase.firestore.FieldValue.increment(1)
+			})
+			const plotRef = userRef.collection("plots").doc(plotId)
+			await batch.update(plotRef, {
+				"d.datePlanted": null,
+				"d.ripe": false,
+				"d.sprouted": false,
+				"d.waterCount": 0,
+				"d.wateredDate": null,
+				"d.alive": false,
+				"d.crop": null
+			})
+			await batch.commit().then(async () => {
+				await plotRef.get().then(doc => callback(doc.data().d))
+			})
+		} catch (error) {
+			console.log("pickCrop failed", error)
+		}
+	}
+
+	async getAndUpdateUserPlots(userLatitude, userLongitude, callback) {
+		try {
+			const user = this._auth.currentUser
+			const geofirestore = new GeoFirestore(this._firestore)
+			const geocollection = geofirestore
+				.collection("users")
+				.doc(user.uid)
+				.collection("plots")
+			if (geocollection) {
+				const coordinates = new firebase.firestore.GeoPoint(
+					userLatitude,
+					userLongitude
+				)
+				geofirestore.runTransaction(async transaction => {
+					const query = geocollection.near({
+						center: coordinates,
+						radius: 10
+					})
+					const results = await query.get()
+					const container = []
+					results.forEach(plotDoc => {
+						plot = plotDoc.data()
+						if (hasDied(plot)) {
+							transaction.update(plotDoc, { "d.alive": false })
+						} else {
+							if (hasDried(plot)) {
+								transaction.update(plotDoc, { "d.watered": false })
+							}
+							if (hasRipened(plot)) {
+								transaction.update(plotDoc, { "d.ripe": true })
+							} else if (hasSprouted(plot)) {
+								transaction.update(plotDoc, { "d.sprouted": true })
+							}
+						}
+						container.push(plotDoc.data())
+					})
+					return callback(container)
+				})
+			}
+		} catch (error) {
+			console.log("get nearby plots failed", error)
+		}
+	}
+
+	async getAllUserPlots(callback) {
+		try {
+			const user = this._auth.currentUser
+			const userPlots = this._firestore
+				.collection("users")
+				.doc(user.uid)
+				.collection("plots")
+			if (userPlots) {
+				await userPlots.onSnapshot(querySnapshot => {
+					let container = []
+					querySnapshot.forEach(doc => {
+						container.push(doc.data())
+					})
+					return callback(container)
+				})
+			}
+		} catch (error) {
+			console.log("getAllUserPlots failed", error)
 		}
 	}
 }
