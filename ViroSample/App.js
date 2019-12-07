@@ -52,11 +52,11 @@ class ViroSample extends Component {
           titleStyle={{ color: "rgba(255,255,255,1)" }}
         >
           <Stack key="root">
-            <Scene key="login" component={Login} title="Welcome to Harvest Move" />
+            {/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
+            <Scene key="market" component={Market} title="Harvest Market" />
             <Scene key="home" component={Home} title="Harvest Move Home" />
             <Scene key="map" component={CropMap} title="My Map" />
             <Scene key="ar" component={AR} />
-            <Scene key="market" component={Market} title="Harvest Market" />
           </Stack>
         </Router>
       </Provider>
