@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { StyleSheet, View, Text, ScrollView, ActivityIndicator } from "react-native"
 import { Card, ListItem, Button, Icon } from "react-native-elements"
+import { FirebaseWrapper } from "../firebase/firebase";
 
 import { SeedsModal, SellCropsModal, ToolsModal, ProtectionModal } from "../js"
 
@@ -9,9 +10,16 @@ class Market extends Component {
     super()
     this.state = {
       modalTypeVisibile: null,
-      visible: true
+      visible: true,
+      kolions: 0
     }
     this.toggleModal = this.toggleModal.bind(this)
+  }
+
+  async componentDidMount() {
+    const user = FirebaseWrapper._auth.currentUser
+    const userRef = FirebaseWrapper._firestore.collection("users").doc(user.id)
+    userRef.get().then(doc => this.setState({kolions: doc.data().kolions}))
   }
 
   toggleModal(modalType) {
@@ -22,14 +30,14 @@ class Market extends Component {
     return (
       <View>
         <ScrollView>
-          <Card title="SELL NOW" image={require("./res/sell_crops.png")}>
+          {/* <Card title="SELL NOW" image={require("./res/sell_crops.png")}>
             <Button
               // icon={<Icon name="code" color="#ffffff" />}
               buttonStyle={styles.button}
               title="SELECT CROPS TO SELL"
               onPress={() => this.toggleModal("sell")}
             />
-          </Card>
+          </Card> */}
 
           <Card title="SEEDS" image={require("./res/seed_pack.png")}>
             <Button
