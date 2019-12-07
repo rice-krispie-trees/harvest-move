@@ -20,9 +20,15 @@ Now select "Seed Bag", select a type of seed, and then tap your plot to seed it 
 
 TAYLA:
 
-Once you have started setting you plots and planting seeds, a user can then move to their crop map to view the location and status of their crops and see what plots need nuturing. A green pin is my current location, my brown colored pins are empty plots that need seeding, blue pins are crops needing to be watered, and if I've waited too long to water...my red pins are crops that have died. But fortunately I have a few purple pins that tell me I have some crops ready to harvest.
+Once you have started setting you plots and planting seeds, a user can then move to their crop map to view the location and status of their crops and see what plots need nuturing. A green pin is my current location, brown colored pins are empty plots that need seeding, blue pins are crops needing to be watered, and if I've waited too long to water...my red pins are crops that have died. But fortunately I have a few purple pins that tell me I have some crops ready to harvest.
 
-Let's go back into AR Mode to harvest. I click a crop ready to harvest and I now have this in my basket to sell for later.
+Let's go back into AR Mode now that we have some crops ready for harvesting. I click a crop ready to harvest and I now have this in my basket to sell for later. Now I'm ready to head to the market and buy new seeds so I can start expanding my farm. With that being the features of our application, Jordan will now speak on the technologies we used to build this...
+
+----SLIDE 3----
+
+JORDAN:
+
+Taking a look at our tech stack, we coded this entire app using only the JavaScript language.
 
 
 
