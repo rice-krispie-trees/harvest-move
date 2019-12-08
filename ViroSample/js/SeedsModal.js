@@ -3,15 +3,7 @@ import { View, Text, Modal, ScrollView } from "react-native"
 import { Button, Image, Card } from "react-native-elements"
 import { corn, potato, cabbage, strawberry, wheat } from "./logic/crops"
 
-export default class SeedsModal extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      visible: true
-    }
-  }
-
-  render() {
+export default function SeedsModal(props) {
   const crops = [corn, potato, cabbage, strawberry, wheat]
   //console.error(crops)
   return (
@@ -19,7 +11,7 @@ export default class SeedsModal extends React.Component {
       <Modal
         animationType={"slide"}
         transparent={false}
-        visible={this.state.visible}
+        visible={props.visible}
       >
         <ScrollView>
           <View>
@@ -36,10 +28,7 @@ export default class SeedsModal extends React.Component {
                     crop.harvestTime} days`}</Text>
                   <Text>{`\u2022 Waters Per Day: x${crop.waterCountPerDay}`}</Text>
                   <Text>{`\u2022 Death Sensitivity: ${crop.sensitivity}`}</Text>
-                  <Button
-                    title={`${crop.value} kolions`}
-                    //onPress={this.props.purchase(crop)}
-                  />
+                  <Button title={`${crop.value} kolions`} />
                 </Card>
               )
             })}
@@ -47,12 +36,11 @@ export default class SeedsModal extends React.Component {
               title="Go Back To Market"
               type="outline"
               raised={true}
-              onPress={() => this.setState({visible: false})}
+              onPress={props.parentToggle}
             />
           </View>
         </ScrollView>
       </Modal>
     </View>
   )
-  }
 }

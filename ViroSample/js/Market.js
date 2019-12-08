@@ -6,7 +6,7 @@ import {
   ScrollView,
   ActivityIndicator
 } from "react-native"
-import { connect } from 'react-redux'
+import { connect } from "react-redux"
 import { Card, ListItem, Button, Icon, Divider } from "react-native-elements"
 import { FirebaseWrapper } from "../firebase/firebase"
 
@@ -18,33 +18,34 @@ class Market extends Component {
     this.state = {
       modalTypeVisibile: null,
       visible: true,
-      kolions: 100
+      kolions: 100,
+      consoleLog: "unchanged"
     }
     this.toggleModal = this.toggleModal.bind(this)
-    this.purchase = this.purchase.bind(this)
   }
 
-  // async componentDidMount() {
-  //   const user = FirebaseWrapper._auth.currentUser
-  //   const userRef = FirebaseWrapper._firestore.collection("users").doc(user.id)
-  //   await userRef.get().then(doc => this.setState({ kolions: doc.data().kolions }))
-  //   console.error("kolions", this.state.kolions)
-  // }
+  async componentDidMount() {
+    //this.setState({ consoleLog: "in didMount" })
+    await FirebaseWrapper.GetInstance().GetCurrentUserProfle(userRef =>
+      // userRef
+      //   ? this.setState({ consoleLog: "userHere" })
+      //   : this.setState({ consoleLog: "no user" })
+      console.log(userRef)
+    )
 
+    // await userRef.get().then(doc => this.setState({ kolions: doc.data().kolions }))
+    // console.error("kolions", this.state.kolions)
+  }
 
   toggleModal(modalType) {
     this.setState({ modalTypeVisibile: modalType })
-  }
-
-  purchase(crop){
-    this.setState({kolions: this.state.kolions - crop.value })
   }
 
   render() {
     return (
       <View>
         <ScrollView>
-          <Text>{`You have ${this.state.kolions} kolions available to use`}</Text>
+          <Text>{`${this.state.consoleLog}`}</Text>
           <Divider />
           <Card title="SEEDS" image={require("./res/seed_pack.png")}>
             <Button
@@ -75,26 +76,25 @@ class Market extends Component {
         {this.state.modalTypeVisibile === "sell" ? (
           <SellCropsModal
             parentToggle={this.toggleModal}
-            parentState={this.state.visible}
+            visible={this.state.visible}
           />
         ) : null}
         {this.state.modalTypeVisibile === "seeds" ? (
           <SeedsModal
-            //parentToggle={this.toggleModal}
-            //parentState={this.state.visible}
-            //purchase={this.purchase}
+            parentToggle={this.toggleModal}
+            visible={this.state.visible}
           />
         ) : null}
         {this.state.modalTypeVisibile === "tools" ? (
           <ToolsModal
             parentToggle={this.toggleModal}
-            parentState={this.state.visible}
+            visible={this.state.visible}
           />
         ) : null}
         {this.state.modalTypeVisibile === "protection" ? (
           <ProtectionModal
             parentToggle={this.toggleModal}
-            parentState={this.state.visible}
+            visible={this.state.visible}
           />
         ) : null}
       </View>

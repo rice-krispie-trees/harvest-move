@@ -1,25 +1,32 @@
-import React from "react";
+import React from "react"
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView
-} from "react-native";
-import { Actions } from "react-native-router-flux";
-import { Card } from "react-native-elements";
-import { connect } from "react-redux";
-import { getUserCoords } from "../store/redux/coords";
+} from "react-native"
+import { Actions } from "react-native-router-flux"
+import { Card } from "react-native-elements"
+import { connect } from "react-redux"
+import { getUserCoords } from "../store/redux/coords"
 
 export default connect(
   state => ({ coords: state.coords }),
   dispatch => ({ getUserCoords: () => dispatch(getUserCoords()) })
 )(
   class extends React.Component {
-    async componentDidMount() {
-      await this.props.getUserCoords();
-      console.log({ ...this.props.coordinates });
+    constructor() {
+      super()
+      this.state = {
+        kolions: 0
+      }
     }
+    async componentDidMount() {
+      await this.props.getUserCoords()
+      console.log({ ...this.props.coordinates })
+    }
+
     render() {
       return (
         <View style={styles.container}>
@@ -71,10 +78,10 @@ export default connect(
             </TouchableOpacity>
           </ScrollView>
         </View>
-      );
+      )
     }
   }
-);
+)
 
 const styles = StyleSheet.create({
   container: {
@@ -108,4 +115,4 @@ const styles = StyleSheet.create({
   text: {
     alignSelf: "center"
   }
-});
+})

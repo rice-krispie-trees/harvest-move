@@ -68,7 +68,17 @@ export class FirebaseWrapper {
     } catch (error) {
       console.log("FirebaseVerifyAuth failed", error)
     }
-  }
+	}
+
+	async GetCurrentUserProfle(callback) {
+		try {
+			const currentUser = this._auth.currentUser
+			const userRef = await this._firestore.collection("users").doc(currentUser.id)
+			callback(userRef.data())
+		} catch (error) {
+			console.log("could not get user", error)
+		}
+	}
 
   async CreateNewDocument(collectionPath, doc) {
     try {
