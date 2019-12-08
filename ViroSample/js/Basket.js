@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Button, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image } from "react-native";
 import { FirebaseWrapper } from "../firebase/firebase";
-import { Card } from "react-native-elements"
+import { Card, Button } from "react-native-elements"
+import { Actions } from "react-native-router-flux";
 
 export default class Basket extends Component {
   constructor(props) {
@@ -22,12 +23,29 @@ export default class Basket extends Component {
     return (
       <View style={styles.container}>
         <Text style={{ fontWeight: 'bold' }}>Your basket currently has:</Text>
-        <Text>{`\u2022 Item #1: Wheat`}</Text>
         <Card
-          image={require('./res/wheat.jpg')}
+          title="WHEAT"
+          image={require('./res/crops/wheat.png')}
           containerStyle={styles.card}
           imageStyle={styles.img}>
-          <Text style={styles.text}>Wheat</Text>
+          <Text>{`\u2022 Quantity: 1`}</Text>
+          <Button
+            onPress={() => Actions.market()}
+            buttonStyle={styles.button}
+            title="SELL WHEAT IN MARKET"
+          />
+        </Card>
+        <Card
+          title="CORN"
+          image={require('./res/crops/corn.png')}
+          containerStyle={styles.card}
+          imageStyle={styles.img}>
+          <Text>{`\u2022 Quantity: 3`}</Text>
+          <Button
+            onPress={() => Actions.market()}
+            buttonStyle={styles.button}
+            title="SELL CORN IN MARKET"
+          />
         </Card>
         {/* {this.state.plots && this.state.plots.map(plot => {
           if (plot.d.alive) return <Text key={plot.d.id}>This crop is: {plot.d.crop}</Text>
@@ -45,14 +63,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,1)"
   },
   button: {
-    shadowColor: "grey",
-    shadowOffset: { height: 1, width: 1 },
-    shadowOpacity: 0.14,
-    shadowRadius: 1,
+    borderRadius: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    marginBottom: 0
   },
   card: {
     width: 299,
-    height: 150,
+    height: 250,
     backgroundColor: "rgba(255,255,255,1)",
     borderColor: "grey",
     borderWidth: 0.1,
@@ -67,6 +85,6 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   text: {
-    alignSelf: "left"
+    alignSelf: "flex-start"
   }
 })

@@ -55,6 +55,7 @@ export default connect(
 							</Card>
 						</TouchableOpacity>
 						<TouchableOpacity
+							onPress={() => Actions.market()}
 							style={styles.button}>
 							<Card
 								image={require('./res/market.png')}
