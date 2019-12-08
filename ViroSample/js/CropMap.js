@@ -65,10 +65,17 @@ export default class CropMap extends Component {
     );
   }
 
+  // pinColor(plot) {
+  //   if (plot.d.alive && plot.d.crop && !plot.d.watered) return "#1ca3ec";
+  //   else if (plot.d.alive) return "#915118";
+  //   else return "red";
+  // }
+
   pinColor(plot) {
-    if (plot.d.alive && plot.d.crop && !plot.d.watered) return "#1ca3ec";
-    else if (plot.d.alive) return "#915118";
-    else return "red";
+    if (!plot.d.alive && plot.d.crop) return "#EA1010";
+    else if ((!plot.d.alive && !plot.d.crop) || (plot.d.alive && !plot.d.ripe && plot.d.watered)) return "#654321";
+    else if (plot.d.alive && !plot.d.watered && !plot.d.ripe) return "#1ca3ec";
+    else return "purple";
   }
 
   getDate(timestamp) {
@@ -103,8 +110,11 @@ export default class CropMap extends Component {
               }}
             >
               <MapView.Callout>
-                <Text style={{ fontWeight: 'bold' }}>{!plot.d.alive ? 'This plot is untilled. Drop by to start farming!' :
+                {/* <Text style={{ fontWeight: 'bold' }}>{!plot.d.alive ? 'This plot is untilled. Drop by to start farming!' :
                   plot.d.crop ? plot.d.crop[0].toUpperCase() + plot.d.crop.slice(1) : 'Oh no! You forgot to water and the crop died!'}
+                </Text> */}
+                <Text style={{ fontWeight: 'bold' }}>{!plot.d.alive ? plot.d.crop ? 'Oh no! You forgot to water and the crop died!' :
+                  'This plot is untilled. Drop by to start farming!' : plot.d.crop[0].toUpperCase() + plot.d.crop.slice(1)}
                 </Text>
                 {plot.d.datePlanted &&
                   <Text>Crop planted on: {this.getDate(plot.d.datePlanted.seconds).toString().split(' ').slice(0, 3).join(' ')}</Text>
