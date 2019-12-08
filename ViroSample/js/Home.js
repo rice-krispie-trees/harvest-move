@@ -1,9 +1,15 @@
-import React from "react"
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, } from "react-native"
-import { Actions } from "react-native-router-flux"
-import { Card } from "react-native-elements"
-import { connect } from "react-redux"
-import { getUserCoords } from "../store/redux/coords"
+import React from "react";
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	ScrollView
+} from "react-native";
+import { Actions } from "react-native-router-flux";
+import { Card } from "react-native-elements";
+import { connect } from "react-redux";
+import { getUserCoords } from "../store/redux/coords";
 
 export default connect(
 	state => ({ coords: state.coords }),

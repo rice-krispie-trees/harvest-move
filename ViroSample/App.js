@@ -19,7 +19,11 @@ import {
   TouchableHighlight
 } from "react-native";
 import { Router, Scene, Stack } from "react-native-router-flux";
+<<<<<<< HEAD
 import { Login, Home, CropMap, AR, Basket } from "./js";
+=======
+import { Login, Home, CropMap, AR, Market } from "./js";
+>>>>>>> 512e697c681331221a8905c1033f5cf48f1ccd5a
 import configureStore from "./store";
 
 import { firebaseConfig } from "./firebase/config";
@@ -53,15 +57,12 @@ class ViroSample extends Component {
           titleStyle={{ color: "rgba(255,255,255,1)" }}
         >
           <Stack key="root">
-            <Scene
-              key="login"
-              component={Login}
-              title="Welcome to Harvest Move"
-            />
-            <Scene key="home" component={Home} title="Harvest Move" />
+            {/* <Scene key="login" component={Login} title="Welcome to Harvest Move" /> */}
+            <Scene key="home" component={Home} title="Harvest Move Home" />
             <Scene key="map" component={CropMap} title="My Map" />
             <Scene key="ar" component={AR} />
             <Scene key="basket" component={Basket} />
+            <Scene key="market" component={Market} title="Harvest Market" />
           </Stack>
         </Router>
       </Provider>

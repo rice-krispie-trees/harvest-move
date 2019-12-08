@@ -13,7 +13,8 @@ export const corn = {
 	name: "corn",
 	waterCountPerDay: 1,
 	sensitivity: 3,
-	value: 100
+	value: 100,
+	img: require("../res/crops/corn.png")
 }
 
 export const potato = {
@@ -22,7 +23,8 @@ export const potato = {
 	name: "potato",
 	waterCountPerDay: 0.5,
 	sensitivity: 1.5,
-	value: 300
+	value: 300,
+	img: require("../res/crops/potato.png")
 }
 
 export const cabbage = {
@@ -31,7 +33,8 @@ export const cabbage = {
 	name: "cabbage",
 	waterCountPerDay: 2,
 	sensitivity: 1.5,
-	value: 500
+	value: 500,
+	img: require("../res/crops/cabbage.png")
 }
 
 export const strawberry = {
@@ -40,7 +43,8 @@ export const strawberry = {
 	name: "strawberry",
 	waterCountPerDay: 2,
 	sensitivity: 3,
-	value: 600
+	value: 600,
+	img: require("../res/crops/strawberry.png")
 }
 
 export const wheat = {
@@ -49,7 +53,8 @@ export const wheat = {
 	name: "wheat",
 	waterCountPerDay: 1,
 	sensitivity: 5,
-	value: 1000
+	value: 1000,
+	img: require("../res/crops/wheat.png")
 }
 
 export default {
