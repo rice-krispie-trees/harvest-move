@@ -121,7 +121,7 @@ export default class CropMap extends Component {
                 }
                 {plot.d.ripe ?
                   <Text style={{ color: "green" }}>This crop is ripe! Come by to collect the harvest.</Text>
-                  : (plot.d.watered ?
+                  : (plot.d.alive && plot.d.watered ?
                     <Text style={{ color: "#915118" }}>This crop has been watered. Wait until it sprouts!</Text>
                     : plot.d.alive && plot.d.crop && <Text style={{ color: "#1ca3ec" }}>Stop by and water this crop.</Text>
                   )}
