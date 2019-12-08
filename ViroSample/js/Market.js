@@ -31,6 +31,7 @@ class Market extends Component {
   //   console.error("kolions", this.state.kolions)
   // }
 
+
   toggleModal(modalType) {
     this.setState({ modalTypeVisibile: modalType })
   }
