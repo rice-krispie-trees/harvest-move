@@ -45,7 +45,7 @@ class ViroSample extends Component {
 
   render() {
     FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
-    console.disableYellowBox = true;
+    // console.disableYellowBox = true;
     return (
       <Provider store={store}>
         <Router
