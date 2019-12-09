@@ -80,6 +80,7 @@ export class FirebaseWrapper {
 		}
 	}
 
+
   async CreateNewDocument(collectionPath, doc) {
     try {
       const ref = this._firestore.collection(collectionPath).doc()
@@ -306,7 +307,7 @@ export class FirebaseWrapper {
       })
       await ref.get().then(doc => callback(doc.data().d))
     } catch (error) {
-      console.log("ripenPlot failed", error)
+      console.log("sproutPlot failed", error)
     }
   }
 
@@ -387,11 +388,13 @@ export class FirebaseWrapper {
         .collection("plots")
         .doc(plotId)
       await ref.update({
-        "d.sprouted": true
+        "d.waterCount": firebase.firestore.FieldValue.increment(1),
+        "d.wateredDate": new Date(),
+        "d.watered": true
       })
       await ref.get().then(doc => callback(doc.data().d))
     } catch (error) {
-      console.log("sproutPlot failed", error)
+      console.log("waterPlot failed", error)
     }
   }
 
@@ -439,28 +442,6 @@ export class FirebaseWrapper {
     }
   }
 
-  async buyFromMarket(crop, callback) {
-    try {
-      const user = this._auth.currentUser
-      const batch = this._firestore.batch()
-      const userRef = this._firestore.collection("users").doc(user.id)
-      await batch.update(userRef, {
-        [`seeds.${crop.name}`]: firebase.firestore.FieldValue.increment(1),
-        kolions: firebase.firestore.FieldValue.increment(-crop.value)
-      })
-      await batch
-        .commit()
-        .then(
-          await userRef.onSnapshot(snapshot =>
-            callback(snapshot.data().kolions)
-          )
-        )
-      unsubscribe()
-    } catch (error) {
-      console.log("could not update basket", error)
-    }
-  }
-
   async getAndUpdateUserPlots(userLatitude, userLongitude, callback) {
     try {
       const user = this._auth.currentUser
@@ -482,7 +463,7 @@ export class FirebaseWrapper {
           const results = await query.get()
           const container = []
           results.forEach(plotDoc => {
-            plot = plotDoc.data()
+            let plot = plotDoc.data()
             if (hasDied(plot)) {
               transaction.update(plotDoc, { "d.alive": false })
             } else {

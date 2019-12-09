@@ -41,7 +41,6 @@ export default connect(
 				clickable: true
 			}
 			this._onClick = this._onClick.bind(this)
-			this._onHover = this._onHover.bind(this)
 		}
 
 		_onClick(plot) {
