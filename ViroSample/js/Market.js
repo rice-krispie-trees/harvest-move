@@ -24,18 +24,14 @@ class Market extends Component {
     this.toggleModal = this.toggleModal.bind(this)
   }
 
-  async componentDidMount() {
-    //this.setState({ consoleLog: "in didMount" })
-    await FirebaseWrapper.GetInstance().GetCurrentUserProfle(userRef =>
-      // userRef
-      //   ? this.setState({ consoleLog: "userHere" })
-      //   : this.setState({ consoleLog: "no user" })
-      console.log(userRef)
-    )
-
-    // await userRef.get().then(doc => this.setState({ kolions: doc.data().kolions }))
-    // console.error("kolions", this.state.kolions)
-  }
+  // async componentDidMount() {
+  //   //this.setState({ consoleLog: "in didMount" })
+  //   // await FirebaseWrapper.GetInstance().GetCurrentUserProfle(userRef =>
+  //   //   this.setState({ consoleLog: "userRef" })
+  //   // )
+  //   // await userRef.get().then(doc => this.setState({ kolions: doc.data().kolions }))
+  //   // console.error("kolions", this.state.kolions)
+  // }
 
   toggleModal(modalType) {
     this.setState({ modalTypeVisibile: modalType })
