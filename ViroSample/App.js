@@ -19,7 +19,7 @@ import {
   TouchableHighlight
 } from "react-native";
 import { Router, Scene, Stack } from "react-native-router-flux";
-import { Login, Home, CropMap, AR } from "./js";
+import { Login, Home, CropMap, AR, Basket } from "./js";
 import configureStore from "./store";
 
 import { firebaseConfig } from "./firebase/config";
@@ -45,6 +45,7 @@ class ViroSample extends Component {
 
   render() {
     FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
+    console.disableYellowBox = true;
     return (
       <Provider store={store}>
         <Router
@@ -60,6 +61,7 @@ class ViroSample extends Component {
             <Scene key="home" component={Home} title="Harvest Move" />
             <Scene key="map" component={CropMap} title="My Map" />
             <Scene key="ar" component={AR} />
+            <Scene key="basket" component={Basket} />
           </Stack>
         </Router>
       </Provider>
