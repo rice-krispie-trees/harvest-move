@@ -22,7 +22,7 @@ export default class Basket extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={{ fontWeight: 'bold' }}>Your basket currently has:</Text>
+        <Text style={{ fontWeight: 'bold' }}>Josh's Basket:</Text>
         <Card
           title="WHEAT"
           image={require('./res/crops/wheat.png')}

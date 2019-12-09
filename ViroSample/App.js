@@ -54,7 +54,7 @@ class ViroSample extends Component {
         >
           <Stack key="root">
             <Scene key="login" component={Login} title="Welcome to Harvest Move" />
-            <Scene key="home" component={Home} title="Harvest Move Home" />
+            <Scene key="home" component={Home} title="Welcome Back Josh" />
             <Scene key="map" component={CropMap} title="My Map" />
             <Scene key="ar" component={AR} />
             <Scene key="basket" component={Basket} />
