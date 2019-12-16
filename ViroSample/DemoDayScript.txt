@@ -1,0 +1,51 @@
+----SLIDE 1----
+INTRO [JOSH]:
+
+Greetings, mortals!
+
+My name is Josh Wintraub, and these are my teammates, Jordan, Peet, and Tayla.
+Together we developed Harvest Move, a groundbreaking, innovative, and disruptive AR farming simulator, based on the best-selling SNES classic, Harvest Moon.
+Have you ever thought, "Goddamn, I wish I could be productive on my commute, but also have fun."
+Think no more -- Harvest Move is here!
+
+----SLIDE 2----
+In Harvest Move, a User will till plots on the sidewalk through their commute, plant selected crops, and water them every day.
+Keep it up for long enough and your crops will ripen!
+Harvest them, sell them in the market, buy new seeds and expand your farm.
+
+----DEMO----
+A user can start by logging in or signing up and head to the homepage to start farming.
+Start by selecting "Hoe" and find a flat surface and tap to place your plot.
+Now select "Seed Bag", select a type of seed, and then tap your plot to seed it and be sure to water it after.
+
+USER FLOW:
+
+Once you have started setting you plots and planting seeds, a user can then move to their crop map to view the location and status of their crops and see what plots need nuturing. A green pin is my current location, brown colored pins are empty plots that need seeding, blue pins are crops needing to be watered, and if I've waited too long to water...my red pins are crops that have died. But fortunately I have a few purple pins that tell me I have some crops ready to harvest.
+
+Let's go back into AR Mode now that we have some crops ready for harvesting. I click a crop ready to harvest and I now have this in my basket to sell for later. Now I'm ready to head to the market and buy new seeds so I can start expanding my farm. With that being the features of our application, Jordan will now speak on the technologies we used to build this...
+
+----SLIDE 3----
+
+TECH STACK:
+
+Taking a look at our tech stack, we coded this entire app using only the JavaScript language. This allowed us to leverage our existing skills when creating a mobile app through using React Native and using ReactJS on our frontend and using ViroReact to allows us the ability to render and manipulate 3D objects in an AR space. We used Firebase for our backend, as it could tracking our plots using geolocation and it can manage all our data in real time, shortening the exchange of data to and from the database. This coupled with React Native's UI focus and heightened renderng abilities allowed us to provide our users the best possible experience and reduce wait times for object rendering and interaction. Firebase also allows users to work offline, reducing affects on performance when users are in low-service areas, such as subways.
+
+TECH DIFICULTIES & STRETCH GOALS:
+
+Through the process of creating this app, one of our biggest challenges was the ability to render visible objects in the AR space. We quickly realized that when rendering between 2D and 3D, your position during testing greatly impacted your ability to see and locate objects within the screen. To solve this we boxed our images in Viro Nodes and Boxes to mimic 3D visuals. Another challenge was seamlessly combining the scenes in our app for users to have a single interupted experience. Dealing with compatability issues between our map and AR modes, we complied our app using Xcode for seamless integration of development frameworks. Going forward we would like to work on expanding our app to make use of real-time weather data present game obstacles for our users as well as incorporate multiplayer use.
+
+----SLIDE 4----
+Overall we are very proud of the work we have accomplished and for more info you can take a look at our github page and have fun Harvest-Moving!
+
+---------------------------------------------PEET WORK----------------------------------------------
+
+We can start by viewing our current crops on our map and seeing what needs watering.
+
+Hm, looks like some of our crops are ready to harvest! We'll now go in to the AR Mode.
+
+[Talk through clicking to till new plots, plant seeds, water the plots]
+[Go over to pre-wanded plots, harvest]
+
+We can now head into the market to sell our crops and buy new seeds.
+
+[Demonstrate]
