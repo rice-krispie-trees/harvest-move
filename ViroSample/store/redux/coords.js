@@ -1,4 +1,5 @@
 import { FirebaseWrapper } from "../../firebase/firebase"
+import { getAllPlots } from "./plots"
 
 export const GOT_USER_COORDS = "GET_USER_COORDS"
 export const DIDNT_GET_USER_COORDS = "DIDNT_GET_USER_COORDS"
@@ -14,15 +15,20 @@ export const failedGettingUserCoords = errorMsg => ({
 	errorMsg
 })
 
-export const getUserCoords = () => async dispatch => {
+export const getUserCoords = () => dispatch => {
 	try {
-		await navigator.geolocation.getCurrentPosition(position => {
-			dispatch(
-				gotUserCoords(position.coords.latitude, position.coords.longitude)
-			),
-				error => dispatch(failedGettingUserCoords(error.message)),
-				{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-		})
+		return navigator.geolocation.getCurrentPosition(
+			position => {
+				dispatch(
+					gotUserCoords(position.coords.latitude, position.coords.longitude)
+				)
+				dispatch(
+					getAllPlots(position.coords.latitude, position.coords.longitude)
+				)
+			},
+			error => dispatch(failedGettingUserCoords(error.message)),
+			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+		)
 	} catch (error) {
 		console.log("error getting user coordinates", error)
 	}

@@ -6,9 +6,10 @@ import coords from "./redux/coords"
 import seed from "./redux/seed"
 import auth from "./redux/auth"
 import tool from "./redux/tool"
+import inventory from "./redux/inventory"
 import { verifyAuth } from "./redux/auth"
 
-const reducer = combineReducers({ auth, plots, coords, seed, tool })
+const reducer = combineReducers({ auth, plots, coords, seed, tool, inventory })
 const middleware = applyMiddleware(
 	thunkMiddleware,
 	createLogger({ collapsed: true })
