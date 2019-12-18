@@ -15,7 +15,7 @@ export const failedGettingUserCoords = errorMsg => ({
 	errorMsg
 })
 
-export const getUserCoords = () => dispatch => {
+export const getUserCoordsAndPlots = () => dispatch => {
 	try {
 		return navigator.geolocation.getCurrentPosition(
 			position => {

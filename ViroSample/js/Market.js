@@ -17,8 +17,7 @@ class Market extends Component {
 		super()
 		this.state = {
 			modalTypeVisibile: null,
-			visible: true,
-			kolions: 100
+			visible: true
 		}
 		this.toggleModal = this.toggleModal.bind(this)
 	}

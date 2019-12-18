@@ -9,30 +9,23 @@ import {
 import { Actions } from "react-native-router-flux"
 import { Card } from "react-native-elements"
 import { connect } from "react-redux"
-import { getUserCoords } from "../store/redux/coords"
+import { getUserCoordsAndPlots } from "../store/redux/coords"
 import { getUserProfile } from "../store/redux/inventory"
 
 export default connect(
 	state => ({ coords: state.coords }),
 	dispatch => ({
-		getUserCoords: () => dispatch(getUserCoords()),
+		getUserCoordsAndPlots: () => dispatch(getUserCoordsAndPlots()),
 		getUserProfile: () => dispatch(getUserProfile())
 	})
 )(
 	class extends React.Component {
-		constructor() {
-			super()
-			this.state = {
-				kolions: 0
-			}
-		}
 		componentDidMount() {
-			this.props.getUserCoords()
+			this.props.getUserCoordsAndPlots()
 			this.props.getUserProfile()
 		}
 
 		render() {
-			console.log("COORDS IN RENDER", { ...this.props.coordinates })
 			return (
 				<View style={styles.container}>
 					<ScrollView>
