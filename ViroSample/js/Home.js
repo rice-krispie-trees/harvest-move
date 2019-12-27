@@ -1,59 +1,76 @@
 import React from "react"
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, } from "react-native"
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	ScrollView
+} from "react-native"
 import { Actions } from "react-native-router-flux"
 import { Card } from "react-native-elements"
 import { connect } from "react-redux"
-import { getUserCoords } from "../store/redux/coords"
+import { getUserCoordsAndPlots } from "../store/redux/coords"
+import { getUserProfile } from "../store/redux/inventory"
 
 export default connect(
 	state => ({ coords: state.coords }),
-	dispatch => ({ getUserCoords: () => dispatch(getUserCoords()) })
+	dispatch => ({
+		getUserCoordsAndPlots: () => dispatch(getUserCoordsAndPlots()),
+		getUserProfile: () => dispatch(getUserProfile())
+	})
 )(
 	class extends React.Component {
-		async componentDidMount() {
-			await this.props.getUserCoords()
-			console.log({ ...this.props.coordinates })
+		componentDidMount() {
+			this.props.getUserCoordsAndPlots()
+			this.props.getUserProfile()
 		}
+
 		render() {
 			return (
 				<View style={styles.container}>
 					<ScrollView>
 						<TouchableOpacity
 							onPress={() => Actions.ar()}
-							style={styles.button}>
+							style={styles.button}
+						>
 							<Card
-								image={require('./res/wheat.jpg')}
+								image={require("./res/wheat.jpg")}
 								containerStyle={styles.card}
-								imageStyle={styles.img}>
+								imageStyle={styles.img}
+							>
 								<Text style={styles.text}>START FARMING!</Text>
 							</Card>
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => Actions.map()}
-							style={styles.button}>
+							style={styles.button}
+						>
 							<Card
-								image={require('./res/map.jpg')}
+								image={require("./res/map.jpg")}
 								containerStyle={styles.card}
-								imageStyle={styles.img}>
+								imageStyle={styles.img}
+							>
 								<Text style={styles.text}>CROP MAP</Text>
 							</Card>
 						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => Actions.basket()}
-							style={styles.button}>
+						<TouchableOpacity style={styles.button}>
 							<Card
-								image={require('./res/basket.png')}
+								image={require("./res/basket.png")}
 								containerStyle={styles.card}
-								imageStyle={styles.img}>
+								imageStyle={styles.img}
+							>
 								<Text style={styles.text}>BASKET</Text>
 							</Card>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={styles.button}>
+							style={styles.button}
+							onPress={() => Actions.market()}
+						>
 							<Card
-								image={require('./res/market.png')}
+								image={require("./res/market.png")}
 								containerStyle={styles.card}
-								imageStyle={styles.img}>
+								imageStyle={styles.img}
+							>
 								<Text style={styles.text}>HARVEST MARKET</Text>
 							</Card>
 						</TouchableOpacity>
@@ -75,7 +92,7 @@ const styles = StyleSheet.create({
 		shadowColor: "grey",
 		shadowOffset: { height: 1, width: 1 },
 		shadowOpacity: 0.14,
-		shadowRadius: 1,
+		shadowRadius: 1
 	},
 	card: {
 		width: 299,

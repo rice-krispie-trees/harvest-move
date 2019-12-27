@@ -27,7 +27,9 @@ export default class Basket extends Component {
           image={require('./res/wheat.jpg')}
           containerStyle={styles.card}
           imageStyle={styles.img}>
-          <Text style={styles.text}>Wheat</Text>
+          <Text
+          //style={styles.text}
+          >Wheat</Text>
         </Card>
         {/* {this.state.plots && this.state.plots.map(plot => {
           if (plot.d.alive) return <Text key={plot.d.id}>This crop is: {plot.d.crop}</Text>
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     borderRadius: 3
   },
-  text: {
-    alignSelf: "left"
-  }
+  // text: {
+  //   alignSelf: "center"
+  // }
 })
