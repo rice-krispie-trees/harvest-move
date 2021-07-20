@@ -14,7 +14,7 @@
     "native-base": "^2.13.8",
     "proj4": "^2.6.0",
     "react": "16.8.3",
-    "react-native": "0.59.9",
+    "react-native": "0.62.3",
     "react-native-elements": "^1.2.7",
     "react-native-google-signin": "^2.1.1",
     "react-native-maps": "^0.26.1",
